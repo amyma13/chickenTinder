@@ -134,10 +134,9 @@ function JoinParty() {
         {myParties && myParties.length > 0 ? (
             myParties.map((party, index) => (
               <li key={index}>
-                {party}
-                <button className="view-restaurants-button" onClick={navigateToViewRestaurants}>
-                </button>
-                <button className="view-results-button">View Results</button>
+                <h4>{party}</h4>
+                <button className="join-button" onClick={navigateToViewRestaurants}>Pick Restaurants</button>
+                <button className="join-button">View Results</button>
               </li>
             ))
           ) : (

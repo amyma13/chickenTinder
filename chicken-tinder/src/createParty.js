@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { db, auth } from "./firebase";
 import { collection, doc, setDoc, arrayUnion, updateDoc } from "firebase/firestore"; 
+import "./createParty.css";
 
 
 function CreateParty() {
@@ -84,7 +85,7 @@ function CreateParty() {
             required
           />
         </div>
-        <div className="zipcode-group">
+        <div className="form-group">
           <label>Zip Code:</label>
           <input
             type="text" // Changed type to 'text'
@@ -94,7 +95,7 @@ function CreateParty() {
             required
           />
         </div>
-        <div className="inviteUser-group">
+        <div className="form-group">
           <label>Invite User:</label>
           <input
             type="text" // Changed type to 'text'
