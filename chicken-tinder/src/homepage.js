@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import './homepage.css';
 
@@ -17,6 +17,8 @@ function HomePage() {
     // Implement the logic for creating a party
     history.push("/joinParty");
   };
+
+
 
   return (
     <div className="container">
