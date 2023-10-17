@@ -9,10 +9,6 @@ import { getNodeText } from '@testing-library/react';
 function JoinParty() {
   const history = useHistory();
 
-  const navigateToViewRestaurants = () => {
-    history.push('/pickRestaurants');
-  };
-
   const [success, setSuccess] = useState('');
 
 
@@ -30,7 +26,10 @@ function JoinParty() {
   };
 
   const [myParties, setMyParties] = useState([]);
+  const [myZips, setMyZips] = useState([]);
 
+
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -98,6 +97,40 @@ function JoinParty() {
     };
     fetchParties(); 
     }, []);
+
+    useEffect(() => {
+      const fetchZipCodes = async () => {
+        const zips = [];
+    
+        for (let index = 0; index < myParties.length; index++) {
+          try {
+            const party = myParties[index];
+            const docP = doc(db, "Party", party);
+            const docParties = await getDoc(docP);
+    
+            if (docParties.exists()) {
+              console.log(docParties.data().zipcode);
+              zips.push(docParties.data().zipcode);
+            }
+          } catch (error) {
+            console.error('Error fetching party:', error);
+          }
+        }
+    
+        setMyZips(zips);
+      };
+    
+      fetchZipCodes();
+    }, [myParties]);
+
+  
+      const navigateToViewRestaurants = (index) => {
+        const x = myZips[index]; 
+        console.log("1");
+        console.log(x);
+        history.push('/pickRestaurants', { zipcode: x});
+      };
+
 //   const myParties = ['Party 1', 'Party 2', 'Party 3']; // Replace with actual data
 
   return (
@@ -135,7 +168,7 @@ function JoinParty() {
             myParties.map((party, index) => (
               <li key={index}>
                 <h4>{party}</h4>
-                <button className="join-button" onClick={navigateToViewRestaurants}>Pick Restaurants</button>
+                <button className="join-button" onClick={() => navigateToViewRestaurants(index)}>Pick Restaurants</button>
                 <button className="join-button">View Results</button>
               </li>
             ))

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { db, auth } from "./firebase";
 import { collection, doc, setDoc, arrayUnion, updateDoc } from "firebase/firestore"; 
+import { v4 as uuidv4 } from 'uuid';
 import "./createParty.css";
 
 
@@ -11,7 +12,8 @@ function CreateParty() {
     partyName: '',
     password: '',
     zipcode: '', // Added zipcode field
-    inviteUser: '' // Added inviteUser field
+    inviteUser: '', // Added inviteUser field
+    id: ''
   });
 
   const [success, setSuccess] = useState('');
@@ -27,39 +29,42 @@ function CreateParty() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     // You can handle the form submission logic here
+  
+    const uniqueId = uuidv4(); // Generate a unique ID
+  
     console.log('Form submitted:', formData);
     try {
-        const ref = collection(db, "Party");
-        console.log(auth.currentUser.email);
-
-        await setDoc(doc(ref, formData.partyName), {
-            partyName: formData.partyName,
-            password: formData.password,
-            zipcode: formData.zipcode,
-            invitedUsers: formData.inviteUser
-        });
-
-        const refEmail = doc(db, "Users", auth.currentUser.email);
-
-        // Atomically add a new region to the "regions" array field.
-        await updateDoc(refEmail, {
-            party: arrayUnion(formData.partyName)
-        });
-
-        setFormData({
-            partyName: '',
-            password: '',
-            zipcode: '', 
-            inviteUser: ''
-          });
-          setSuccess("Party successfully created");
+      const ref = collection(db, 'Party');
+      console.log(auth.currentUser.email);
+  
+      await setDoc(doc(ref, uniqueId), {
+        partyName: formData.partyName,
+        password: formData.password,
+        zipcode: formData.zipcode,
+        invitedUsers: formData.inviteUser,
+      });
+  
+      const refEmail = doc(db, 'Users', auth.currentUser.email);
+  
+      // Atomically add a new region to the "regions" array field.
+      await updateDoc(refEmail, {
+        party: arrayUnion(formData.partyName),
+      });
+  
+      setFormData({
+        partyName: '',
+        password: '',
+        zipcode: '',
+        inviteUser: '',
+        //id: uniqueId, // Set the ID to the generated unique ID
+      });
+      setSuccess('Party successfully created');
+    } catch (error) {
+      console.log('Error: ' + error);
+      setSuccess('Party unable to be created');
     }
-    catch(error){
-        console.log("Error: "+error);
-        setSuccess("Party unable to be created");
-    }
-    
   };
+  
 
   return (
     <div className="create-party-container">

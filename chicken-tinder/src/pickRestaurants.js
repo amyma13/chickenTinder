@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import "./pickRestaurants.css";
 
 function PickRestaurants() {
     const [restaurants, setRestaurants] = useState([]);
 
+      // Access location state
+      const location = useLocation();
+      const { zipcode, id } = location.state;
+
   useEffect(() => {
     // Make a GET request to your Express server
-    fetch('http://localhost:3001/yelpAPI2')
+    fetch(`http://localhost:3001/yelpAPI2?zipcode=${zipcode}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error('Network response was not ok');

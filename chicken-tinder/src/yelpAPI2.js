@@ -9,33 +9,14 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-const URL = 'https://ipgeolocation.abstractapi.com/v1/?api_key=d0932fd4c4e44d0ab5a0e2c23e606015';
-
-const sendAPIRequest = async () => {
-  try {
-    const ipAPIresponse = await axios.get(URL);
-    const publicIPAddress = ipAPIresponse.data.ip_address;
-    const locationAPIResponse = await axios.get(`${URL}&ip_address=${publicIPAddress}`);
-    const location = {
-      longitude: locationAPIResponse.data.longitude,
-      latitude: locationAPIResponse.data.latitude,
-    };
-    return location;
-  } catch (error) {
-    throw error;
-  }
-};
-
 const yelpClient = yelp.client(apiKey);
 
 app.get('/yelpAPI2', async (req, res) => {
   try {
-    const location = await sendAPIRequest();
-    console.log(location);
+    const zipcode = req.query.zipcode;
 
     const searchRequest = {
-      latitude: location.latitude,
-      longitude: location.longitude,
+      location: zipcode,
       radius: 1600,
       sort_by: 'best_match',
       limit: 12,
@@ -61,27 +42,6 @@ app.get('/yelpAPI2', async (req, res) => {
     res.status(500).json({ error: 'Error fetching public IP address and/or location' });
   }
 });
-
-app.get('/getIpAddress', (req, res) => {
-  const clientIpAddress = req.ip; // This retrieves the client's IP address
-  res.send(`Client IP Address: ${clientIpAddress}`);
-});
-
-const {addEmail} = require('./firebase')
-
-  app.post('/login', async (req, res) => {
-    console.log(req.body.email);
-
-    const userAccount = await addEmail({user: req.body.email});
-    console.log("USER ACCOUNT: "+userAccount);
-    if (userAccount){
-      console.log("SUCCESS");
-      res.send({success: true});
-      return;
-    }
-    console.log("FAILURE");
-    res.send({success: false});
-  });
 
 app.listen(3001, () => {
   console.log(`Server is running on port 3001`);
