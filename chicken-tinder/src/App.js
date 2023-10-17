@@ -1,24 +1,26 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import HomePage from './homepage';
+import RestaurantList from './restaurantlist';
+import Login from './login';
+import Profile from './profile';
+import JoinParty from './joinParty';
+import CreateParty from './createParty';
+import PickRestaurants from './pickRestaurants';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Switch>
+        <Route path="/" exact component={Login} />
+        <Route path="/homepage" exact component={HomePage} />
+        <Route path="/restaurantlist" component={RestaurantList} />
+        <Route path="/profile" component={Profile} />
+        <Route path="/joinParty" component={JoinParty} />
+        <Route path="/createParty" component={CreateParty} />
+        <Route path="/pickRestaurants" component={PickRestaurants} /> 
+      </Switch>
+    </Router>
   );
 }
 

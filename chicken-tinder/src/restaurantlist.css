@@ -1,0 +1,88 @@
+/* RestaurantList.css */
+
+.restaurant-list-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+  }
+  
+  .restaurant-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    max-width: 800px;
+  }
+  
+  .restaurant-card {
+    background-color: #f4f4f4;
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    width: calc(50% - 8px); /* Two cards per row */
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  
+  h2 {
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+  
+  .card-content {
+    flex-grow: 1; /* Allows content to expand vertically */
+  }
+  
+  .card-actions {
+    display: flex;
+    flex-direction: column; /* Stack checkmark and X vertically */
+    align-items: flex-end; /* Align to the right side */
+    margin-top: 16px;
+  }
+  
+  .checkmark-icon,
+  .x-icon {
+    font-size: 24px;
+    cursor: pointer;
+  }
+  
+  .checkmark-icon.selected {
+    color: green; /* Adjust the color as needed */
+  }
+  
+  .x-icon {
+    color: red; /* Adjust the color as needed */
+  }
+  
+  p {
+    font-size: 16px;
+    margin-bottom: 4px;
+  }
+  
+  a {
+    margin-top: 16px;
+    text-decoration: none;
+    color: blue;
+  }
+  
+
+li{
+    display: block;
+    float: left;
+    width: 50%;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+ul{
+    padding: 0;
+    width: 100%
+}
+
+ul::after{
+    content: "";
+    display: block;
+    clear: both;
+}

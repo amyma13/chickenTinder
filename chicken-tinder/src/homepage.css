@@ -1,0 +1,32 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
+  
+  @media (min-width: 850px){
+    .button-row {
+      display: flex;
+      width: 80%;
+    }
+}
+  
+  
+  button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 24px;
+    margin: 10px;
+    height: 30vh;
+    width: 100%;
+  }
+  
+button:hover {
+    background-color: #0056b3;
+  }
+  

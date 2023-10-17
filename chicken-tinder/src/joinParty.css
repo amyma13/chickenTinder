@@ -1,0 +1,92 @@
+.join-party-container {
+    text-align: center;
+    margin: auto;
+    margin-top: 50px;
+    max-width: 320px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  h1 {
+    font-size: 24px;
+    margin: 10px 0;
+  }
+  
+  h2 {
+    font-size: 20px;
+    margin: 20px 0 10px;
+  }
+  
+  .form-group {
+    text-align: left;
+    margin: 10px 0;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin: 5px 0;
+  }
+  
+  .join-button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+  }
+  
+  .join-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .my-parties {
+    margin-top: 20px;
+  }
+  
+  .view-results-button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-left: 10px;
+  }
+  
+  .view-results-button:hover {
+    background-color: #0056b3;
+  }
+
+  .view-restaurants-button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-left: 10px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+  }
+  
+  .view-restaurants-button:hover {
+    background-color: #0056b3;
+  }
+  
