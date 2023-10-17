@@ -63,7 +63,7 @@ function Results() {
       getDocs(user1ResultsQuery) // Use getDocs to fetch documents
         .then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
-            user1Results.push(doc.data().result);
+            user1Results.push(doc.data().result[0]);
           });
           console.log("user1Results:" + user1Results)
           getDocs(user2ResultsQuery) // Use getDocs to fetch documents
@@ -74,7 +74,7 @@ function Results() {
                 const commonIndices = [];
                 for (let i = 0; i < user2Results.length; i++) {
                     console.log(user1Results[i] +" " + user2Results[i]);
-                    if(user1Results[i] && user2Results[i]){
+                    if(user2Results[i]){
                         console.log(i);
                         commonIndices.push(i);
                         console.log(commonIndices);
