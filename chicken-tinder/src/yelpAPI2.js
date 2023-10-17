@@ -67,49 +67,23 @@ app.get('/getIpAddress', (req, res) => {
   res.send(`Client IP Address: ${clientIpAddress}`);
 });
 
+const {addEmail} = require('./firebase')
+
+  app.post('/login', async (req, res) => {
+    console.log(req.body.email);
+
+    const userAccount = await addEmail({user: req.body.email});
+    console.log("USER ACCOUNT: "+userAccount);
+    if (userAccount){
+      console.log("SUCCESS");
+      res.send({success: true});
+      return;
+    }
+    console.log("FAILURE");
+    res.send({success: false});
+  });
+
 app.listen(3001, () => {
   console.log(`Server is running on port 3001`);
 });
 
-// import React, { useEffect, useState } from 'react';
-
-// function App() {
-//   const [restaurants, setRestaurants] = useState([]);
-
-//   useEffect(() => {
-//     // Make a GET request to your Express server endpoint
-//     fetch('http://localhost:3000/yelpAPI2')
-//       .then((response) => {
-//         if (!response.ok) {
-//           throw new Error('Network response was not ok');
-//         }
-//         return response.json();
-//       })
-//       .then((data) => {
-//         // Update the state with the fetched data
-//         setRestaurants(data);
-//       })
-//       .catch((error) => {
-//         console.error('Error fetching data:', error);
-//       });
-//   }, []);
-
-//   return (
-//     <div>
-//       <h1>Restaurant List</h1>
-//       <ul>
-//         {restaurants.map((restaurant, index) => (
-//           <li key={index}>
-//             <h2>{restaurant.name}</h2>
-//             <p>Address: {restaurant.address}</p>
-//             <p>City: {restaurant.city}</p>
-//             <p>State: {restaurant.state}</p>
-//             <p>Postal Code: {restaurant.postalCode}</p>
-//           </li>
-//         ))}
-//       </ul>
-//     </div>
-//   );
-// }
-
-// export default App;
