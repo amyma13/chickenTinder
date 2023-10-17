@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { db } from "./firebase";
-import { collection, doc, setDoc } from "firebase/firestore"; 
+import { db, auth } from "./firebase";
+import { collection, doc, setDoc, arrayUnion, updateDoc } from "firebase/firestore"; 
+
 
 function CreateParty() {
 
@@ -11,6 +12,8 @@ function CreateParty() {
     zipcode: '', // Added zipcode field
     inviteUser: '' // Added inviteUser field
   });
+
+  const [success, setSuccess] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,7 +27,9 @@ function CreateParty() {
     e.preventDefault();
     // You can handle the form submission logic here
     console.log('Form submitted:', formData);
-    const ref = collection(db, "Party");
+    try {
+        const ref = collection(db, "Party");
+        console.log(auth.currentUser.email);
 
         await setDoc(doc(ref, formData.partyName), {
             partyName: formData.partyName,
@@ -32,6 +37,27 @@ function CreateParty() {
             zipcode: formData.zipcode,
             invitedUsers: formData.inviteUser
         });
+
+        const refEmail = doc(db, "Users", auth.currentUser.email);
+
+        // Atomically add a new region to the "regions" array field.
+        await updateDoc(refEmail, {
+            party: arrayUnion(formData.partyName)
+        });
+
+        setFormData({
+            partyName: '',
+            password: '',
+            zipcode: '', 
+            inviteUser: ''
+          });
+          setSuccess("Party successfully created");
+    }
+    catch(error){
+        console.log("Error: "+error);
+        setSuccess("Party unable to be created");
+    }
+    
   };
 
   return (
@@ -80,6 +106,7 @@ function CreateParty() {
         </div>
         <button type="submit" className="submit-button">Create Party</button>
       </form>
+      <div>{success}</div>
       <Link to="/homepage">Go Back</Link>
     </div>
   );

@@ -2,16 +2,17 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import "./joinParty.css";
 import { Link } from 'react-router-dom';
-import { db } from "./firebase";
-import { collection, doc, getDoc } from "firebase/firestore"; 
+import { db, auth } from "./firebase";
+import { collection, doc, setDoc, getDoc, arrayUnion, updateDoc } from "firebase/firestore"; 
 
 function JoinParty() {
   const history = useHistory();
 
   const navigateToViewRestaurants = () => {
     history.push('/pickRestaurants');
-    console.log("AAAAAAAAAA");
   };
+
+  const [success, setSuccess] = useState('');
 
 
   const [formData, setFormData] = useState({
@@ -29,6 +30,8 @@ function JoinParty() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    try {
     // You can handle the form submission logic here (joining a party)
     console.log('Form submitted:', formData);
 
@@ -40,15 +43,37 @@ function JoinParty() {
         
         if (docSnap.data().password == formData.password){
             console.log("PASSWORD CORRECT");
+            setSuccess("Party successfully joined");
+
+
+        const refEmail = doc(db, "Users", auth.currentUser.email);
+
+        // Atomically add a new region to the "regions" array field.
+        await updateDoc(refEmail, {
+            party: arrayUnion(formData.partyName)
+        });
+
         }
         else{
             console.log("WRONG PASSWORD");
+            setSuccess("Party does not exist");
         }
     } else {
     // docSnap.data() will be undefined in this case
         console.log("No such party!");
     } 
-  };
+
+        setFormData({
+          partyName: '',
+          password: '',
+        }); 
+    }
+        catch(error){
+            console.log("Error: "+error);
+            setSuccess("Party unable to be created");
+        }
+  }; 
+
 
   const myParties = ['Party 1', 'Party 2', 'Party 3']; // Replace with actual data
 
@@ -77,6 +102,7 @@ function JoinParty() {
           />
         </div>
         <button type="submit" className="join-button">Join</button>
+        <div>{success}</div>
       </form>
 
       <div className="my-parties">
