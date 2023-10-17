@@ -6,17 +6,22 @@ import Profile from './profile';
 import JoinParty from './joinParty';
 import CreateParty from './createParty';
 import PickRestaurants from './pickRestaurants';
+import Results from './results';
+import Login from './login';
 
 function App() {
+
   return (
     <Router>
       <Switch>
         <Route path="/homepage" exact component={HomePage} />
+        <Route path="/" exact component={Login} />
         <Route path="/restaurantlist" component={RestaurantList} />
         <Route path="/profile" component={Profile} />
         <Route path="/joinParty" component={JoinParty} />
         <Route path="/createParty" component={CreateParty} />
         <Route path="/pickRestaurants" component={PickRestaurants} /> 
+        <Route path="/results" component={Results} /> 
       </Switch>
     </Router>
   );

@@ -78,7 +78,6 @@ function JoinParty() {
   useEffect(() => {
     // Assuming you have a function to fetch parties from your database
     const fetchParties = async () => {
-        console.log("plz tell me were here"); 
       try {
         // const parties = []; // Fetch parties from your database
         const docUsers = doc(db, "Users", auth.currentUser.email); 
@@ -126,9 +125,13 @@ function JoinParty() {
   
       const navigateToViewRestaurants = (index) => {
         const x = myZips[index]; 
-        console.log("1");
-        console.log(x);
-        history.push('/pickRestaurants', { zipcode: x});
+        history.push('/pickRestaurants', { zipcode: x, party: myParties[index]});
+      };
+
+      const navigateToViewResults = (index) => {
+        const x = myZips[index]; 
+        console.log("2: " + myParties[index]);
+        history.push('/results', { zipcode: x, party: myParties[index]});
       };
 
 //   const myParties = ['Party 1', 'Party 2', 'Party 3']; // Replace with actual data
@@ -168,8 +171,8 @@ function JoinParty() {
             myParties.map((party, index) => (
               <li key={index}>
                 <h4>{party}</h4>
-                <button className="join-button" onClick={() => navigateToViewRestaurants(index)}>Pick Restaurants</button>
-                <button className="join-button">View Results</button>
+                <button className="join-button" onClick={() => navigateToViewRestaurants(index, party)}>Pick Restaurants</button>
+                <button className="join-button"onClick={() => navigateToViewResults(index, party)}>View Results</button>
               </li>
             ))
           ) : (

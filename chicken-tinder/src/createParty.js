@@ -37,11 +37,11 @@ function CreateParty() {
       const ref = collection(db, 'Party');
       console.log(auth.currentUser.email);
   
-      await setDoc(doc(ref, uniqueId), {
+      await setDoc(doc(ref, formData.partyName), {
         partyName: formData.partyName,
         password: formData.password,
         zipcode: formData.zipcode,
-        invitedUsers: formData.inviteUser,
+        users: [auth.currentUser.email],
       });
   
       const refEmail = doc(db, 'Users', auth.currentUser.email);
@@ -55,8 +55,6 @@ function CreateParty() {
         partyName: '',
         password: '',
         zipcode: '',
-        inviteUser: '',
-        //id: uniqueId, // Set the ID to the generated unique ID
       });
       setSuccess('Party successfully created');
     } catch (error) {
@@ -96,16 +94,6 @@ function CreateParty() {
             type="text" // Changed type to 'text'
             name="zipcode"
             value={formData.zipcode}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>Invite User:</label>
-          <input
-            type="text" // Changed type to 'text'
-            name="inviteUser"
-            value={formData.inviteUser}
             onChange={handleChange}
             required
           />
