@@ -63,15 +63,23 @@ function Results() {
       getDocs(user1ResultsQuery) // Use getDocs to fetch documents
         .then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
-            user1Results.push(doc.data().results);
+            user1Results.push(doc.data().result);
           });
           console.log("user1Results:" + user1Results)
           getDocs(user2ResultsQuery) // Use getDocs to fetch documents
             .then((querySnapshot) => {
               querySnapshot.forEach((doc) => {
-                const user2Results = doc.data().results;
-                const common = user1Results.map((val, i) => val && user2Results[i]);
-                const commonIndices = common.map((value, index) => (value ? index : null)).filter((index) => index !== null);
+                const user2Results = doc.data().result;
+                console.log("user2Results:" + user2Results)
+                const commonIndices = [];
+                for (let i = 0; i < user2Results.length; i++) {
+                    console.log(user1Results[i] +" " + user2Results[i]);
+                    if(user1Results[i] && user2Results[i]){
+                        console.log(i);
+                        commonIndices.push(i);
+                        console.log(commonIndices);
+                    }
+                  }
                 console.log("commonIndices:" + commonIndices)
 
                 fetch(`http://localhost:3001/yelpAPI2?zipcode=${zipcode}`)
