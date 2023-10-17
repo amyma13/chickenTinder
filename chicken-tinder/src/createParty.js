@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { db } from "./firebase";
+import { collection, doc, setDoc } from "firebase/firestore"; 
 
 function CreateParty() {
-
-    useEffect(() => {
-        console.log("CREATE PARTY")
-      }, []);
-
 
   const [formData, setFormData] = useState({
     partyName: '',
     password: '',
+    zipcode: '', // Added zipcode field
+    inviteUser: '' // Added inviteUser field
   });
 
   const handleChange = (e) => {
@@ -21,10 +20,18 @@ function CreateParty() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // You can handle the form submission logic here
     console.log('Form submitted:', formData);
+    const ref = collection(db, "Party");
+
+        await setDoc(doc(ref, formData.partyName), {
+            partyName: formData.partyName,
+            password: formData.password,
+            zipcode: formData.zipcode,
+            invitedUsers: formData.inviteUser
+        });
   };
 
   return (
@@ -54,16 +61,20 @@ function CreateParty() {
         <div className="zipcode-group">
           <label>Zip Code:</label>
           <input
-            type="zipcode"
+            type="text" // Changed type to 'text'
             name="zipcode"
+            value={formData.zipcode}
+            onChange={handleChange}
             required
           />
         </div>
         <div className="inviteUser-group">
           <label>Invite User:</label>
           <input
-            type="inviteUser"
+            type="text" // Changed type to 'text'
             name="inviteUser"
+            value={formData.inviteUser}
+            onChange={handleChange}
             required
           />
         </div>
@@ -75,3 +86,4 @@ function CreateParty() {
 }
 
 export default CreateParty;
+

@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import "./joinParty.css";
 import { Link } from 'react-router-dom';
-
+import { db } from "./firebase";
+import { collection, doc, getDoc } from "firebase/firestore"; 
 
 function JoinParty() {
   const history = useHistory();
@@ -26,10 +27,27 @@ function JoinParty() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // You can handle the form submission logic here (joining a party)
     console.log('Form submitted:', formData);
+
+    const docRef = doc(db, "Party", formData.partyName);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+        console.log(docSnap.data().password);
+        
+        if (docSnap.data().password == formData.password){
+            console.log("PASSWORD CORRECT");
+        }
+        else{
+            console.log("WRONG PASSWORD");
+        }
+    } else {
+    // docSnap.data() will be undefined in this case
+        console.log("No such party!");
+    } 
   };
 
   const myParties = ['Party 1', 'Party 2', 'Party 3']; // Replace with actual data

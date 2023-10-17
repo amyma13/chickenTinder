@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './login.css';
 import { useHistory } from 'react-router-dom';
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
@@ -9,12 +9,8 @@ import { collection, doc, setDoc } from "firebase/firestore";
 function Login() {
   const history = useHistory();
 
-  const navigateToHomePage = () => {
-    
-    console.log('Navigating to the homepage');
-    // You can implement the navigation logic here
-    //history.push('/homepage');
-  };
+
+    const [email, setEmail] = useState('');
 
     async function pushAccount(e){
 
@@ -26,18 +22,18 @@ function Login() {
         const token = credential.accessToken;
         // The signed-in user info.
         const user = result.user;
-    
+        
         uploadToDB(user.email, user.displayName);
 
         async function uploadToDB (emailEntered, displayName){
             console.log("WE IN HERE");
-            const ref = collection(db, "Test");
+            const ref = collection(db, "Users");
 
         await setDoc(doc(ref, emailEntered), {
             name: displayName,
             email: emailEntered
         });
-
+        setEmail(emailEntered);
         }
         
         history.push('/homepage');
