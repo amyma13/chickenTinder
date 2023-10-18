@@ -3,11 +3,6 @@ import { Link } from 'react-router-dom';
 
 function CreateParty() {
 
-    useEffect(() => {
-        console.log("CREATE PARTY")
-      }, []);
-
-
   const [formData, setFormData] = useState({
     partyName: '',
     password: '',
