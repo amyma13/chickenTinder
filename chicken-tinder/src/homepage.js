@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import './homepage.css';
 
-
 function HomePage() {
   const history = useHistory();
 
@@ -12,7 +11,8 @@ function HomePage() {
   };
   const navigateToProfile = () => {
     // Implement the logic for creating a party
-    history.push("/profile");
+    // history.push("/profile");
+    history.push("/viewProfile");
   };
   const navigateToJoinParty = () => {
     // Implement the logic for creating a party
