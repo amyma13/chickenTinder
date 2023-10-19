@@ -8,7 +8,6 @@ import { collection, doc, setDoc, getDoc } from "firebase/firestore";
 function Login() {
   const history = useHistory();
 
-  async function pushAccount(e) {
     async function pushAccount(e) {
       // Your existing code
       console.log("pushed");
@@ -114,6 +113,6 @@ function Login() {
 
 
 }
-}
+
 
 export default Login;
