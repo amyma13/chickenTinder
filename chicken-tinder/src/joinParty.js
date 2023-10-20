@@ -1,16 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import { useHistory } from 'react-router-dom';
 import "./joinParty.css";
 import { Link } from 'react-router-dom';
-
+import { db, auth } from "./firebase";
+import { collection, doc, setDoc, getDoc, arrayUnion, updateDoc } from "firebase/firestore"; 
+import { getNodeText } from '@testing-library/react';
 
 function JoinParty() {
   const history = useHistory();
 
-  const navigateToViewRestaurants = () => {
-    history.push('/pickRestaurants');
-    console.log("AAAAAAAAAA");
-  };
+  const [success, setSuccess] = useState('');
 
 
   const [formData, setFormData] = useState({
@@ -26,13 +25,116 @@ function JoinParty() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const [myParties, setMyParties] = useState([]);
+  const [myZips, setMyZips] = useState([]);
+
+
+  
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    try {
     // You can handle the form submission logic here (joining a party)
     console.log('Form submitted:', formData);
-  };
 
-  const myParties = ['Party 1', 'Party 2', 'Party 3']; // Replace with actual data
+    const docRef = doc(db, "Party", formData.partyName);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+        
+        if (docSnap.data().password == formData.password){
+            console.log("PASSWORD CORRECT");
+            setSuccess("Party successfully joined");
+        const refEmail = doc(db, "Users", auth.currentUser.email);
+
+        // Atomically add a new region to the "regions" array field.
+        await updateDoc(refEmail, {
+            party: arrayUnion(formData.partyName)
+        });
+
+        }
+        else{
+            console.log("WRONG PASSWORD");
+            setSuccess("Party does not exist");
+        }
+    } else {
+    // docSnap.data() will be undefined in this case
+        console.log("No such party!");
+    } 
+
+        setFormData({
+          partyName: '',
+          password: '',
+        }); 
+    }
+        catch(error){
+            console.log("Error: "+error);
+            setSuccess("Party unable to be created");
+        }
+  }; 
+
+
+
+  useEffect(() => {
+    // Assuming you have a function to fetch parties from your database
+    const fetchParties = async () => {
+      try {
+        // const parties = []; // Fetch parties from your database
+        const docUsers = doc(db, "Users", auth.currentUser.email); 
+        console.log(auth.currentUser.email); 
+        const docParties = await getDoc(docUsers); 
+        console.log("Doc Data:", docParties.data());
+        if (docParties.exists()){
+            setMyParties(docParties.data().party) 
+        } else {
+            // setMyParties([]); 
+            setMyParties(myParties || []);
+        }
+      } catch (error) {
+        console.error('Error fetching parties:', error);
+      }
+    };
+    fetchParties(); 
+    }, []);
+
+    useEffect(() => {
+      const fetchZipCodes = async () => {
+        const zips = [];
+    
+        for (let index = 0; index < myParties.length; index++) {
+          try {
+            const party = myParties[index];
+            const docP = doc(db, "Party", party);
+            const docParties = await getDoc(docP);
+    
+            if (docParties.exists()) {
+              console.log(docParties.data().zipcode);
+              zips.push(docParties.data().zipcode);
+            }
+          } catch (error) {
+            console.error('Error fetching party:', error);
+          }
+        }
+    
+        setMyZips(zips);
+      };
+    
+      fetchZipCodes();
+    }, [myParties]);
+
+  
+      const navigateToViewRestaurants = (index) => {
+        const x = myZips[index]; 
+        history.push('/pickRestaurants', { zipcode: x, party: myParties[index]});
+      };
+
+      const navigateToViewResults = (index) => {
+        const x = myZips[index]; 
+        console.log("2: " + myParties[index]);
+        history.push('/results', { zipcode: x, party: myParties[index]});
+      };
+
+//   const myParties = ['Party 1', 'Party 2', 'Party 3']; // Replace with actual data
 
   return (
     <div className="join-party-container">
@@ -59,18 +161,23 @@ function JoinParty() {
           />
         </div>
         <button type="submit" className="join-button">Join</button>
+        <div>{success}</div>
       </form>
 
       <div className="my-parties">
         <h2>My Parties</h2>
         <ul>
-          {myParties.map((party, index) => (
-            <li key={index}>
-              {party} 
-              <button className="view-restaurants-button" onClick={navigateToViewRestaurants} >Pick Restaurants</button>
-              <button className="view-results-button">View Results</button> 
-            </li>
-          ))}
+        {myParties && myParties.length > 0 ? (
+            myParties.map((party, index) => (
+              <li key={index}>
+                <h4>{party}</h4>
+                <button className="join-button" onClick={() => navigateToViewRestaurants(index, party)}>Pick Restaurants</button>
+                <button className="join-button"onClick={() => navigateToViewResults(index, party)}>View Results</button>
+              </li>
+            ))
+          ) : (
+            <li>No parties available</li>
+          )}
         </ul>
       </div>
       <Link to="/homepage">Go Back</Link>

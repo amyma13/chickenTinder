@@ -1,14 +1,18 @@
+
+/*
 .create-party-container {
     text-align: center;
-    margin: 0 auto;
-    max-width: 300px;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10%;
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 5px;
     background-color: #fff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   }
-  
+
   h1 {
     font-size: 24px;
     margin: 10px 0;
@@ -16,8 +20,10 @@
   
   .form-group {
     text-align: left;
-    margin: 10px 0;
-  }
+    margin-left: auto;
+    width: 90%;
+    margin-right: auto;
+}
   
   label {
     display: block;
@@ -42,9 +48,17 @@
     cursor: pointer;
     font-size: 16px;
     margin-top: 10px;
-  }
+    width: 90%;
+    margin-bottom: 10px;
+    height: 3em;
+}
   
   .submit-button:hover {
     background-color: #0056b3;
   }
   
+.create-party-container a{
+  margin-top: 10px;
+}
+
+*/

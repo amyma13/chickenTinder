@@ -1,3 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
 .container {
     display: flex;
     flex-direction: column;
@@ -13,8 +18,14 @@
     }
 }
   
+@media (max-width: 830px){
+  .container{
+      height: 80%;
+  }
   
-  button {
+}
+  
+  .button-row button {
     background-color: #007bff;
     color: #fff;
     padding: 10px 20px;
@@ -22,11 +33,12 @@
     border-radius: 5px;
     font-size: 24px;
     margin: 10px;
-    height: 30vh;
+    height: 100%;
     width: 100%;
   }
   
-button:hover {
+.button-row button:hover {
     background-color: #0056b3;
   }
   
+*/
