@@ -9,41 +9,41 @@ function Profile() {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const docUsers = doc(db, "Users", auth.currentUser.email); 
+        const docUsers = doc(db, "Users", auth.currentUser.email);
         console.log("HERE");
-        console.log(auth.currentUser.email); 
-        const docUserInfo = await getDoc(docUsers); 
+        console.log(auth.currentUser.email);
+        const docUserInfo = await getDoc(docUsers);
         console.log("Doc Data:", docUserInfo.data());
-        if (docUserInfo.exists()){
-            //setMyParties(docParties.data().party)
-            const dat = docUserInfo.data();
-            console.log("Got it");
-            let name = "";
-            let city = "";
-            let zipCode ="";
-            if ('name' in dat){
-              name = dat.name;
-            }
-            else{
-              name = auth.currentUser.displayName;
-            }
-            if ('city' in dat){
-              city = dat.city;
-            }
-            if ('zipCode' in dat){
-              zipCode = dat.city;
-            }
-            setFormData({name: name, city: city, zipCode: zipCode});
-            
+        if (docUserInfo.exists()) {
+          //setMyParties(docParties.data().party)
+          const dat = docUserInfo.data();
+          console.log("Got it");
+          let name = "";
+          let city = "";
+          let zipCode = "";
+          if ('name' in dat) {
+            name = dat.name;
+          }
+          else {
+            name = auth.currentUser.displayName;
+          }
+          if ('city' in dat) {
+            city = dat.city;
+          }
+          if ('zipCode' in dat) {
+            zipCode = dat.city;
+          }
+          setFormData({ name: name, city: city, zipCode: zipCode });
+
         } else {
-            console.log("User not found")
+          console.log("User not found")
         }
       } catch (error) {
         console.error('Error fetching parties:', error);
       }
     };
-    fetchUserInfo(); 
-  },[])
+    fetchUserInfo();
+  }, [])
 
   const [formData, setFormData] = useState({
     name: '',
@@ -76,50 +76,61 @@ function Profile() {
       });
       console.log("profile updated");
     }
-    catch (error){
-      console.log("Error: "+error);
+    catch (error) {
+      console.log("Error: " + error);
     }
     history.push("/viewProfile");
   };
 
   return (
-    <div className="profile-container">
-      <h1>Profile</h1>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Name:</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>Current City:</label>
-          <input
-            type="text"
-            name="city"
-            value={formData.city}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>Zip Code:</label>
-          <input
-            type="text"
-            name="zipCode"
-            value={formData.zipCode}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <button type="submit" className="submit-button">Submit</button>
-      </form>
-
-      <Link to="/viewProfile">Go Back</Link>
+    <div className="bg-gray-100 min-h-screen flex flex-col items-center justify-center">
+      <h1 className="text-4xl font-semibold mt-2 mb-4">
+        Profile
+      </h1>
+      <div className="container mx-auto bg-white p-8 rounded-lg shadow-lg">
+        <form onSubmit={handleSubmit}>
+          <div className="form-group mb-4">
+            <label className="text-lg font-semibold">Name:</label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+              className="text-gray-700 border border-indigo-400 rounded w-full py-2 px-3"
+            />
+          </div>
+          <div className="form-group mb-4">
+            <label className="text-lg font-semibold">Current City:</label>
+            <input
+              type="text"
+              name="city"
+              value={formData.city}
+              onChange={handleChange}
+              required
+              className="text-gray-700 border border-indigo-400 rounded w-full py-2 px-3"
+            />
+          </div>
+          <div className="form-group mb-4">
+            <label className="text-lg font-semibold">Zip Code:</label>
+            <input
+              type="text"
+              name="zipCode"
+              value={formData.zipCode}
+              onChange={handleChange}
+              required
+              className="text-gray-700 border border-indigo-400 rounded w-full py-2 px-3"
+            />
+          </div>
+          <button
+            type="submit"
+            className="bg-indigo-700 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded w-full"
+          >
+            Submit
+          </button>
+        </form>
+      </div>
+      <Link to="/viewProfile" className="text-indigo-700 mt-4">Go Back</Link>
     </div>
   );
 }
