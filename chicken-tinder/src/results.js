@@ -9,7 +9,7 @@ import {
   query,
   where,
   getDocs,
-} from 'firebase/firestore'; 
+} from 'firebase/firestore';
 
 function Results() {
   const [commonRestaurants, setCommonRestaurants] = useState([]);
@@ -73,13 +73,13 @@ function Results() {
                 console.log("user2Results:" + user2Results)
                 const commonIndices = [];
                 for (let i = 0; i < user2Results.length; i++) {
-                    console.log(user1Results[i] +" " + user2Results[i]);
-                    if(user2Results[i]){
-                        console.log(i);
-                        commonIndices.push(i);
-                        console.log(commonIndices);
-                    }
+                  console.log(user1Results[i] + " " + user2Results[i]);
+                  if (user2Results[i]) {
+                    console.log(i);
+                    commonIndices.push(i);
+                    console.log(commonIndices);
                   }
+                }
                 console.log("commonIndices:" + commonIndices)
 
                 fetch(`http://localhost:3001/yelpAPI2?zipcode=${zipcode}`)
@@ -98,22 +98,24 @@ function Results() {
   }, [party, user1, user2, zipcode]);
 
   return (
-    <div>
-      <Link to="/joinParty">Go Back</Link>
-      <h1>Restaurants Both Users Agree On</h1>
-      <div className="restaurants">
-        <ul>
-          {commonRestaurants.map((item, index) => (
-            <li key={index}>
-              <div className="restaurant">
-                <img src={item.image} alt={item.name} />
-                <h2>{item.name}</h2>
-                <p>{`Address: ${item.address}`}</p>
-                <p>{`Cuisine: ${item.categories}`}</p>
+    <div className="bg-gray-100 min-h-screen p-4">
+      <Link to="/joinParty" className="text-indigo-700 mb-4">
+        Go Back
+      </Link>
+      <h1 className="text-4xl font-semibold mb-4">Restaurants Both Users Agree On</h1>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {commonRestaurants.map((item, index) => (
+          <div key={item.id} className="border rounded-lg shadow-md p-4">
+            <div className="flex items-start">
+              <img src={item.image} alt={item.name} className="w-1/2 h-48 object-cover rounded" />
+              <div className="w-1/2 ml-4">
+                <h2 className="text-2xl font-semibold mb-4">{item.name}</h2>
+                <p className="text-gray-700">{`Address: ${item.address}`}</p>
+                <p className="text-gray-700">{`Cuisine: ${item.categories}`}</p>
               </div>
-            </li>
-          ))}
-        </ul>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

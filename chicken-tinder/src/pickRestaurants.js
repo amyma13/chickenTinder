@@ -4,50 +4,44 @@ import { useLocation, useHistory } from 'react-router-dom';
 import { db, auth } from "./firebase";
 import { v4 as uuidv4 } from 'uuid';
 import "./pickRestaurants.css";
-import { collection, doc, setDoc } from "firebase/firestore"; 
+import { collection, doc, setDoc } from "firebase/firestore";
 
 function PickRestaurants() {
   const [restaurants, setRestaurants] = useState([]);
   const [userResponses, setUserResponses] = useState([]);
-  const [submitted, setSubmitted] = useState(false); 
+  const [submitted, setSubmitted] = useState(false);
   const [success, setSuccess] = useState('');
   const history = useHistory();
 
   // Access location state
   const location = useLocation();
-  const {zipcode, party} = location.state;
+  const { zipcode, party } = location.state;
 
-    const handleResponse = (index, response) => {
-      console.log(index);
-      const updatedResponses = [...userResponses];
-      updatedResponses[index] = response === 'Yes'; 
-      setUserResponses(updatedResponses);
-      console.log(updatedResponses);
-    };
-  
-    const handleSubmit = async () => {
+  const handleResponse = (index, response) => {
+    const updatedResponses = [...userResponses];
+    updatedResponses[index] = response;
+    setUserResponses(updatedResponses);
+  };
 
-      console.log(userResponses);
-      setSubmitted(true);
-      try {
-        console.log(party);
-        const ref = collection(db, 'Results')
-        await setDoc(doc(ref, auth.currentUser.email), {
-          party: party,
-          result: userResponses,
-          user: auth.currentUser.email,
-          zipcode: zipcode,
-        });
-  
-        setSuccess('Responses submitted successfully');
-      } catch (error) {
-        console.log('Error:', error);
-         setSuccess('Something went wrong :(');
-      }
-  
-      history.push("/results", { zipcode: zipcode, party: party});
-    };
+  const handleSubmit = async () => {
+    setSubmitted(true);
+    try {
+      const ref = collection(db, 'Results')
+      await setDoc(doc(ref, auth.currentUser.email), {
+        party: party,
+        result: userResponses,
+        user: auth.currentUser.email,
+        zipcode: zipcode,
+      });
 
+      setSuccess('Responses submitted successfully');
+    } catch (error) {
+      console.log('Error:', error);
+      setSuccess('Something went wrong :(');
+    }
+
+    history.push("/results", { zipcode: zipcode, party: party });
+  };
 
   useEffect(() => {
     // Make a GET request to your Express server
@@ -61,7 +55,7 @@ function PickRestaurants() {
       .then((data) => {
         // Update the state with the fetched data
         setRestaurants(data);
-        const initialResponses = Array(data.length).fill(false);
+        const initialResponses = Array(data.length).fill('');
         setUserResponses(initialResponses);
       })
       .catch((error) => {
@@ -70,42 +64,56 @@ function PickRestaurants() {
   }, []);
 
   return (
-    <div>
-      <Link to="/joinParty">Go Back</Link>
-      <h1>Would You Eat At These Restaurants?</h1>
-      <div className="restaurants">
-        <ul>
-          {restaurants.map((item, index) => (
-            <li key={item.id}>
-              {/* Restaurant details */}
-              <div className="restaurant">
-                <img src={item.image} alt={item.name} />
-                <h2>{item.name}</h2>
-                <p>{`Address: ${item.address}`}</p>
-                <p>{`Cuisine: ${item.categories}`}</p>
+    <div className="bg-gray-100 min-h-screen p-4">
+      <Link to="/joinParty" className="text-indigo-700 mb-4">
+        Go Back
+      </Link>
+      <h1 className="text-4xl font-semibold mb-4">Would You Eat At These Restaurants?</h1>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {restaurants.map((item, index) => (
+          <div key={item.id} className="border rounded-lg shadow-md p-4">
+            <div className="flex items-start">
+              <img src={item.image} alt={item.name} className="w-1/2 h-48 object-cover rounded" />
+              <div className="w-1/2 ml-4">
+                <h2 className="text-2xl font-semibold mb-4">{item.name}</h2>
+                <p className="text-gray-700">{`Address: ${item.address}`}</p>
+                <p className="text-gray-700">{`Cuisine: ${item.categories}`}</p>
               </div>
-                <div className='response-buttons'>
-                  <button className="yes-button" onClick={() => handleResponse(index, 'Yes')}>
-                    Yes
-                  </button>
-                  <button className="no-button" onClick={() => handleResponse(index, 'No')}>
-                    No
-                  </button>
-                </div>
-            </li>
-          ))}
-        </ul>
+            </div>
+            <div className="flex justify-between mt-4">
+              <button
+                className={`${userResponses[index] === 'Yes'
+                    ? 'w-1/2 mr-2 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-3 rounded transition-colors'
+                    : 'w-1/2 mr-2 bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-3 rounded transition-colors'
+                  }`}
+                onClick={() => handleResponse(index, 'Yes')}
+              >
+                Yes
+              </button>
+              <button
+                className={`${userResponses[index] === 'No'
+                    ? 'w-1/2 ml-2 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-3 rounded transition-colors'
+                    : 'w-1/2 ml-2 bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-3 rounded transition-colors'
+                  }`}
+                onClick={() => handleResponse(index, 'No')}
+              >
+                No
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
-      <div>{success}</div>
+      <div className="text-indigo-700 mt-4">{success}</div>
       {!submitted && (
-        <button className="submit-button" onClick={handleSubmit}>
+        <button
+          className="bg-indigo-700 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded mt-4"
+          onClick={handleSubmit}
+        >
           Submit Responses
         </button>
-
       )}
     </div>
-    
   );
-};
+}
 
 export default PickRestaurants;
