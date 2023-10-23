@@ -43,27 +43,36 @@ function PickRestaurants() {
     history.push("/results", { zipcode: zipcode, party: party });
   };
 
+  // useEffect(() => {
+  //   // Make a GET request to your Express server
+  //   //fetch(`https://chicken-tinder-omega.vercel.app/yelpAPI2?zipcode=${zipcode}`)
+  //   fetch(`https://api.yelp.com/v3/businesses/search`)
+  //     .then((response) => {
+  //       if (!response.ok) {
+  //         throw new Error('Network response was not ok');
+  //       }
+  //       console.log(response);
+  //       return response.json();
+  //     })
+  //     .then((data) => {
+  //       // Update the state with the fetched data
+  //       setRestaurants(data);
+  //       const initialResponses = Array(data.length).fill('');
+  //       setUserResponses(initialResponses);
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error fetching data:', error);
+  //     });
+  // }, []);
+
   useEffect(() => {
-    // Make a GET request to your Express server
-    //fetch(`https://chicken-tinder-omega.vercel.app/yelpAPI2?zipcode=${zipcode}`)
-    fetch(`/yelpAPI2?zipcode=${zipcode}`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        console.log(response);
-        return response.json();
-      })
-      .then((data) => {
-        // Update the state with the fetched data
-        setRestaurants(data);
-        const initialResponses = Array(data.length).fill('');
-        setUserResponses(initialResponses);
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error);
-      });
-  }, []);
+    const options = {method: 'GET', headers: {accept: 'application/json', Authorization: 'Bearer cSR7W49KfeuavvdvjsIprf8QuDTpBdktA7PHxvJgZnRFnsuIVmJRzKY5Qhcx3BJo-gDgZhjXv6-rqIWuarA-gfJ4B8_JnyVIFyAHeWa6_ha5d6HkRhWCHPyDOw0aZXYx' }};
+
+    fetch('https://api.yelp.com/v3/businesses/search?sort_by=best_match&limit=20', options)
+      .then(response => response.json())
+      .then(response => console.log(response))
+      .catch(err => console.error(err));
+  }, []); 
 
   return (
     <div className="bg-gray-100 min-h-screen p-4">
