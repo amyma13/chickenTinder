@@ -45,11 +45,13 @@ function PickRestaurants() {
 
   useEffect(() => {
     // Make a GET request to your Express server
-    fetch(`https://chicken-tinder-omega.vercel.app/yelpAPI2?zipcode=${zipcode}`)
+    //fetch(`https://chicken-tinder-omega.vercel.app/yelpAPI2?zipcode=${zipcode}`)
+    fetch(`/yelpAPI2?zipcode=${zipcode}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
+        console.log(response);
         return response.json();
       })
       .then((data) => {
