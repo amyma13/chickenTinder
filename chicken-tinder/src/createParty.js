@@ -1,22 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { db, auth } from "./firebase";
 import { collection, doc, setDoc, arrayUnion, updateDoc } from "firebase/firestore";
 import { v4 as uuidv4 } from 'uuid';
 import "./createParty.css";
 
-
 function CreateParty() {
-
   const [formData, setFormData] = useState({
     partyName: '',
     password: '',
-    zipcode: '', // Added zipcode field
-    inviteUser: '', // Added inviteUser field
+    zipcode: '',
+    inviteUser: '',
     id: ''
   });
 
   const [success, setSuccess] = useState('');
+  const [partyMessage, setPartyMessage] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -28,14 +27,11 @@ function CreateParty() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // You can handle the form submission logic here
 
-    const uniqueId = uuidv4(); // Generate a unique ID
+    const uniqueId = uuidv4();
 
-    console.log('Form submitted:', formData);
     try {
       const ref = collection(db, 'Party');
-      console.log(auth.currentUser.email);
 
       await setDoc(doc(ref, formData.partyName), {
         partyName: formData.partyName,
@@ -46,10 +42,16 @@ function CreateParty() {
 
       const refEmail = doc(db, 'Users', auth.currentUser.email);
 
-      // Atomically add a new region to the "regions" array field.
       await updateDoc(refEmail, {
         party: arrayUnion(formData.partyName),
       });
+
+      const partyLink = "https://chicken-tinder-omega.vercel.app";
+
+      const message = `You’ve been invited to a ${formData.partyName} party! Click the link and join the party.
+Party Name: ${formData.partyName}
+Password: ${formData.password}
+${partyLink}`;
 
       setFormData({
         partyName: '',
@@ -57,12 +59,22 @@ function CreateParty() {
         zipcode: '',
       });
       setSuccess('Party successfully created');
+      setPartyMessage(message);
     } catch (error) {
       console.log('Error: ' + error);
       setSuccess('Party unable to be created');
     }
   };
 
+  const copyPartyMessage = () => {
+    const textArea = document.createElement("textarea");
+    // Remove HTML tags from the message before copying
+    textArea.value = partyMessage.replace(/<[^>]+>/g, '');
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textArea);
+  };
 
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col items-center justify-center">
@@ -106,12 +118,22 @@ function CreateParty() {
           </div>
           <button
             type="submit"
-            className="bg-indigo-700 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded w-full"
+            className="bg-indigo-700 hover-bg-purple-700 text-white font-bold py-3 px-4 rounded w-full"
           >
             Create Party
           </button>
         </form>
         <div className="text-indigo-700 mt-4">{success}</div>
+        {partyMessage && (
+          <div className="mt-4">
+            <button onClick={copyPartyMessage} className="bg-indigo-700 hover-bg-purple-700 text-white font-bold py-3 px-4 rounded w-full">
+              Copy Party Invitation
+            </button>
+            <div className="mt-2 p-2 border border-indigo-400 rounded">
+              <p>{partyMessage}</p>
+            </div>
+          </div>
+        )}
       </div>
       <Link to="/homepage" className="text-indigo-700 mt-4">Go Back</Link>
     </div>
@@ -119,4 +141,3 @@ function CreateParty() {
 }
 
 export default CreateParty;
-
