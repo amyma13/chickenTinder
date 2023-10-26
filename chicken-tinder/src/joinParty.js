@@ -51,15 +51,15 @@ function JoinParty() {
           await updateDoc(refEmail, {
             party: arrayUnion(formData.partyName)
           });
-
+          console.log("FETCHINGKLGKSJLDF")
+          fetchParties();
         }
         else {
           console.log("WRONG PASSWORD");
-          setSuccess("Party does not exist");
+          setSuccess("Wrong password");
         }
       } else {
-        // docSnap.data() will be undefined in this case
-        console.log("No such party!");
+        setSuccess("No party with that name exists");
       }
 
       setFormData({
@@ -73,34 +73,31 @@ function JoinParty() {
     }
   };
 
-
+  const fetchParties = async () => {
+    try {
+      // const parties = []; // Fetch parties from your database
+      const docUsers = doc(db, "Users", auth.currentUser.email);
+      console.log(auth.currentUser.email);
+      const docParties = await getDoc(docUsers);
+      console.log("Doc Data:", docParties.data());
+      if (docParties.exists()) {
+        setMyParties(docParties.data().party)
+      } else {
+        // setMyParties([]); 
+        setMyParties(myParties || []);
+      }
+    } catch (error) {
+      console.error('Error fetching parties:', error);
+    }
+  };
 
   useEffect(() => {
-    // Assuming you have a function to fetch parties from your database
-    const fetchParties = async () => {
-      try {
-        // const parties = []; // Fetch parties from your database
-        const docUsers = doc(db, "Users", auth.currentUser.email);
-        console.log(auth.currentUser.email);
-        const docParties = await getDoc(docUsers);
-        console.log("Doc Data:", docParties.data());
-        if (docParties.exists()) {
-          setMyParties(docParties.data().party)
-        } else {
-          // setMyParties([]); 
-          setMyParties(myParties || []);
-        }
-      } catch (error) {
-        console.error('Error fetching parties:', error);
-      }
-    };
     fetchParties();
   }, []);
 
   useEffect(() => {
     const fetchZipCodes = async () => {
       const zips = [];
-
       for (let index = 0; index < myParties.length; index++) {
         try {
           const party = myParties[index];
@@ -115,7 +112,6 @@ function JoinParty() {
           console.error('Error fetching party:', error);
         }
       }
-
       setMyZips(zips);
     };
 
@@ -133,8 +129,6 @@ function JoinParty() {
     console.log("2: " + myParties[index]);
     history.push('/results', { zipcode: x, party: myParties[index] });
   };
-
-  //   const myParties = ['Party 1', 'Party 2', 'Party 3']; // Replace with actual data
 
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col items-center justify-center">
