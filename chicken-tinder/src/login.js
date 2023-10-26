@@ -5,10 +5,17 @@ import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth, provider, db } from "./firebase";
 import { collection, doc, setDoc, getDoc } from "firebase/firestore";
 
+var exportedUsername = "";
+export { exportedUsername };
+
 function Login() {
   const history = useHistory();
 
-    async function pushAccount(e) {
+  const navigateToCreateAccount = (index) => {
+    history.push('/homepage');
+  };
+
+    async function pushGoogleAccount(e) {
       // Your existing code
       console.log("pushed");
           signInWithPopup(auth, provider)
@@ -20,6 +27,9 @@ function Login() {
           const user = result.user;
           
           uploadToDB(user.email, user.displayName);
+          
+          //setUsername(user.email);
+          exportedUsername = user.email;
   
           async function uploadToDB (emailEntered, displayName){
               console.log("WE IN HERE");
@@ -44,10 +54,6 @@ function Login() {
               
           }
           console.log("WORK??")
-  
-          
-  
-  
   
           history.push('/homepage')
     
@@ -86,6 +92,7 @@ function Login() {
 
           <button
             className="bg-indigo-800 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded w-full mb-4"
+            onClick={(event) => navigateToCreateAccount(event)}
           >
             Login
           </button>
@@ -101,7 +108,7 @@ function Login() {
 
         <button
           className="border-gray-300 border text-black font-bold py-2 px-4 rounded mt-4"
-          onClick={(event) => pushAccount(event)}
+          onClick={(event) => pushGoogleAccount(event)}
         >
           Sign in with Google
         </button>
@@ -113,6 +120,5 @@ function Login() {
 
 
 }
-
 
 export default Login;

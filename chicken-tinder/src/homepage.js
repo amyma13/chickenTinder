@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import './homepage.css';
+import { exportedUsername } from './login';
 
 function HomePage() {
   const history = useHistory();
@@ -19,7 +20,9 @@ function HomePage() {
     history.push("/joinParty");
   };
 
-
+  useEffect(() => {
+    console.log("USER???" + exportedUsername);
+  },[])
 
   return (
     <div>

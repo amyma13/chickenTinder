@@ -3,6 +3,7 @@ import { Link, useHistory } from 'react-router-dom';
 import "./viewProfile.css";
 import { db, auth } from "./firebase";
 import { collection, doc, setDoc, updateDoc, getDoc } from "firebase/firestore";
+import { exportedUsername } from './login';
 
 function ViewProfile() {
 
@@ -19,7 +20,7 @@ function ViewProfile() {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const docUsers = doc(db, "Users", auth.currentUser.email);
+        const docUsers = doc(db, "Users", exportedUsername);
         console.log("HERE");
         console.log(auth.currentUser.email);
         const docUserInfo = await getDoc(docUsers);

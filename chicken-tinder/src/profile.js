@@ -3,13 +3,14 @@ import { Link, useHistory } from 'react-router-dom';
 import "./profile.css";
 import { db, auth } from "./firebase";
 import { collection, doc, setDoc, updateDoc, getDoc } from "firebase/firestore";
+import { exportedUsername } from './login';
 
 function Profile() {
 
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const docUsers = doc(db, "Users", auth.currentUser.email);
+        const docUsers = doc(db, "Users", exportedUsername);
         console.log("HERE");
         console.log(auth.currentUser.email);
         const docUserInfo = await getDoc(docUsers);
@@ -31,7 +32,7 @@ function Profile() {
             city = dat.city;
           }
           if ('zipCode' in dat) {
-            zipCode = dat.city;
+            zipCode = dat.zipCode;
           }
           setFormData({ name: name, city: city, zipCode: zipCode });
 
@@ -69,7 +70,7 @@ function Profile() {
     try {
       const ref = collection(db, "Users");
       console.log(auth.currentUser.email);
-      await updateDoc(doc(ref, auth.currentUser.email), {
+      await updateDoc(doc(ref, exportedUsername), {
         name: formData.name,
         city: formData.city,
         zipCode: formData.zipCode

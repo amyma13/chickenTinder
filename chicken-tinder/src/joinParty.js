@@ -5,12 +5,12 @@ import { Link } from 'react-router-dom';
 import { db, auth } from "./firebase";
 import { collection, doc, setDoc, getDoc, arrayUnion, updateDoc } from "firebase/firestore";
 import { getNodeText } from '@testing-library/react';
+import { exportedUsername } from './login';
 
 function JoinParty() {
   const history = useHistory();
 
   const [success, setSuccess] = useState('');
-
 
   const [formData, setFormData] = useState({
     partyName: '',
@@ -28,8 +28,6 @@ function JoinParty() {
   const [myParties, setMyParties] = useState([]);
   const [myZips, setMyZips] = useState([]);
 
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -45,7 +43,7 @@ function JoinParty() {
         if (docSnap.data().password == formData.password) {
           console.log("PASSWORD CORRECT");
           setSuccess("Party successfully joined");
-          const refEmail = doc(db, "Users", auth.currentUser.email);
+          const refEmail = doc(db, "Users", exportedUsername);
 
           // Atomically add a new region to the "regions" array field.
           await updateDoc(refEmail, {
@@ -76,7 +74,7 @@ function JoinParty() {
   const fetchParties = async () => {
     try {
       // const parties = []; // Fetch parties from your database
-      const docUsers = doc(db, "Users", auth.currentUser.email);
+      const docUsers = doc(db, "Users", exportedUsername);
       console.log(auth.currentUser.email);
       const docParties = await getDoc(docUsers);
       console.log("Doc Data:", docParties.data());
