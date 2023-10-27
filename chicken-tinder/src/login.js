@@ -25,15 +25,15 @@ function Login() {
               setPassword("");
               history.push("/homepage")
             }else {
-              setError("Wrong password BITCH")
+              setError("Wrong password")
             }
         }
         else{
-           console.log("USER DOESN'T EXIST");
+           setError("User doesn't exist");
         }
       }
       catch(error){
-        console.log("There is an error getting info from database: "+error)
+        setError("There is an error getting info from database: "+error)
       }
     //history.push('/homepage');
   };
@@ -113,6 +113,13 @@ function Login() {
             <input type="password" className="w-full border border-gray-300 p-2 rounded" id="password" onChange ={(event) => setPassword(event.target.value)}/>
           </div>
 
+          {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+            <strong className="font-bold">Error: </strong>
+            <span className="block sm:inline">{error}</span>
+          </div>
+        )}
+
           <button
             className="bg-indigo-800 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded w-full mb-4"
             onClick={(event) => loginWithoutGoogle(event)}
@@ -135,7 +142,7 @@ function Login() {
         >
           Sign in with Google
         </button>
-        <p id = "blah">{error}</p>
+        
 
       </div>
     </div>
