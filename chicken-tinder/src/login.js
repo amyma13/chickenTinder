@@ -11,8 +11,31 @@ export { exportedUsername };
 function Login() {
   const history = useHistory();
 
-  const navigateToCreateAccount = (index) => {
-    history.push('/homepage');
+  const [username, setUsername]  = useState("");
+  const [password, setPassword]  = useState("");
+  const [error, setError]  = useState("");
+
+  const loginWithoutGoogle = async () => {
+      try{
+        const findDoc = doc(db, "Users", username);
+        const docUserInfo = await getDoc(findDoc);
+        if (docUserInfo.exists()){
+            if (docUserInfo.data().password==password){
+              exportedUsername = username;
+              setPassword("");
+              history.push("/homepage")
+            }else {
+              setError("Wrong password BITCH")
+            }
+        }
+        else{
+           console.log("USER DOESN'T EXIST");
+        }
+      }
+      catch(error){
+        console.log("There is an error getting info from database: "+error)
+      }
+    //history.push('/homepage');
   };
 
     async function pushGoogleAccount(e) {
@@ -83,16 +106,16 @@ function Login() {
         <div className="bg-white rounded-lg shadow-lg p-8 w-96">
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-600">Username</label>
-            <input type="text" className="w-full border border-gray-300 p-2 rounded" id="username" />
+            <input type="text" className="w-full border border-gray-300 p-2 rounded" id="username" onChange ={(event) => setUsername(event.target.value)}/>
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-600">Password</label>
-            <input type="password" className="w-full border border-gray-300 p-2 rounded" id="password" />
+            <input type="password" className="w-full border border-gray-300 p-2 rounded" id="password" onChange ={(event) => setPassword(event.target.value)}/>
           </div>
 
           <button
             className="bg-indigo-800 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded w-full mb-4"
-            onClick={(event) => navigateToCreateAccount(event)}
+            onClick={(event) => loginWithoutGoogle(event)}
           >
             Login
           </button>
@@ -100,7 +123,7 @@ function Login() {
 
           <p className="text-gray-600 text-center">
             Don't have an account?{' '}
-            <a href="#" className="hover:text-blue-500">
+            <a href="homepage" className="hover:text-blue-500">
               Sign Up
             </a>
           </p>
@@ -112,6 +135,7 @@ function Login() {
         >
           Sign in with Google
         </button>
+        <p id = "blah">{error}</p>
 
       </div>
     </div>
