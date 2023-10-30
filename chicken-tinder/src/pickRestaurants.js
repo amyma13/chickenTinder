@@ -70,7 +70,7 @@ function PickRestaurants() {
               <img src={item.image_url} alt={item.name} className="w-1/2 h-48 object-cover rounded" />
               <div className="w-1/2 ml-4">
                 <h2 className="text-2xl font-semibold mb-4">{item.name}</h2>
-                <p className="text-gray-700">{`Address: ${item.location}`}</p>
+                <p className="text-gray-700">{`Address: ${item.location[0]}`}</p>
                 <p className="text-gray-700">{`Cuisine: ${item.categories[0].title}`}</p>
               </div>
             </div>
