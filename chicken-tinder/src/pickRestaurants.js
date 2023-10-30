@@ -66,7 +66,7 @@ function PickRestaurants() {
         {restaurants.map((item, index) => (
           <div key={item.id} className="border rounded-lg shadow-md p-4">
             <div className="flex items-start">
-              <img src={item.image} alt={item.name} className="w-1/2 h-48 object-cover rounded" />
+              <img src={item.image_url} alt={item.name} className="w-1/2 h-48 object-cover rounded" />
               <div className="w-1/2 ml-4">
                 <h2 className="text-2xl font-semibold mb-4">{item.name}</h2>
                 <p className="text-gray-700">{`Address: ${item.address}`}</p>
