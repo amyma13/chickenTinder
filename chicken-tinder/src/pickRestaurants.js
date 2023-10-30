@@ -43,36 +43,15 @@ function PickRestaurants() {
     history.push("/results", { zipcode: zipcode, party: party });
   };
 
-  // useEffect(() => {
-  //   // Make a GET request to your Express server
-  //   //fetch(`https://chicken-tinder-omega.vercel.app/yelpAPI2?zipcode=${zipcode}`)
-  //   fetch(`https://api.yelp.com/v3/businesses/search`)
-  //     .then((response) => {
-  //       if (!response.ok) {
-  //         throw new Error('Network response was not ok');
-  //       }
-  //       console.log(response);
-  //       return response.json();
-  //     })
-  //     .then((data) => {
-  //       // Update the state with the fetched data
-  //       setRestaurants(data);
-  //       const initialResponses = Array(data.length).fill('');
-  //       setUserResponses(initialResponses);
-  //     })
-  //     .catch((error) => {
-  //       console.error('Error fetching data:', error);
-  //     });
-  // }, []);
-
   useEffect(() => {
     const options = {method: 'GET', headers: {accept: 'application/json', Authorization: 'Bearer n1vgxCT7H7rPMv0Ed2EuFhCb049rxhsD08h8t1mxI7CfUry614nt5iDETm9nPKnrvujYoJV-VzisbZ6QscRN_Dh3ctLDuxZbrp_rZhlKL7HbCctZQeE2XfEWpgM3ZXYx' }};
 
   fetch(`https://vast-waters-56699-3595bd537b3a.herokuapp.com/https://api.yelp.com/v3/businesses/search?sort_by=best_match&limit=12&radius=1600&location=${zipcode}`, options)
-  //fetch(`https://api.yelp.com/v3/businesses/search?sort_by=best_match&limit=12&radius=1600&location=${zipcode}`, options)
-  //fetch(`https://chicken-tinder-omega.vercel.app/yelpAPI2?zipcode=${zipcode}`)
       .then(response => response.json())
-      .then(response => console.log(response))
+      .then(data => {
+        // Update the 'restaurants' state with the fetched data
+        setRestaurants(data.businesses);
+      })
       .catch(err => console.error(err));
   }, []); 
 
