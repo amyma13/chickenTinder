@@ -49,6 +49,7 @@ function PickRestaurants() {
   fetch(`https://vast-waters-56699-3595bd537b3a.herokuapp.com/https://api.yelp.com/v3/businesses/search?sort_by=best_match&limit=12&radius=1600&location=${zipcode}`, options)
       .then(response => response.json())
       .then(data => {
+        console.log(data);
         // Update the 'restaurants' state with the fetched data
         setRestaurants(data.businesses);
       })
