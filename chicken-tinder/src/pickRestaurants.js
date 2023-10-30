@@ -72,6 +72,7 @@ function PickRestaurants() {
                 <h2 className="text-2xl font-semibold mb-4">{item.name}</h2>
                 <p className="text-gray-700">{`Address: ${item.location.address1}`}</p>
                 <p className="text-gray-700">{`Cuisine: ${item.categories[0].title}`}</p>
+                <p className="text-gray-700">{`Price: ${item.price}`}</p>
               </div>
             </div>
             <div className="flex justify-between mt-4">
