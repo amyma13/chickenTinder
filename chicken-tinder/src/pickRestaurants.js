@@ -42,7 +42,7 @@ function PickRestaurants() {
 
     history.push("/results", { zipcode: zipcode, party: party });
   };
-try{
+
     useEffect(() => {
     const options = {method: 'GET', headers: {accept: 'application/json', Authorization: 'Bearer n1vgxCT7H7rPMv0Ed2EuFhCb049rxhsD08h8t1mxI7CfUry614nt5iDETm9nPKnrvujYoJV-VzisbZ6QscRN_Dh3ctLDuxZbrp_rZhlKL7HbCctZQeE2XfEWpgM3ZXYx' }};
 
@@ -55,26 +55,6 @@ try{
       .catch(err => console.error(err));
   }, []); 
 
-  const restaurantsResponse = await yelpClient.search(searchRequest);
-  restaurants = restaurantsResponse.jsonBody.businesses;
-  console.log(restaurants[0].categories[0].alias);
-
-  // Extract relevant information for each restaurant
-  const restaurantObjects = restaurants.map((restaurant) => ({
-    name: restaurant.name,
-    address: restaurant.location.address1,
-    categories : restaurant.categories[0].title,
-    image: restaurant.image_url
-    // Add more properties as needed
-  }));
-
-  // Send the restaurant objects as JSON to the front end
-  res.json(restaurantObjects);
-} catch (error) {
-  console.error(error);
-  res.status(500).json({ error: 'Error fetching public IP address and/or location' });
-}
-};
 
   return (
     <div className="bg-gray-100 min-h-screen p-4">
