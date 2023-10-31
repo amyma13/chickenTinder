@@ -65,14 +65,15 @@ function Results() {
         }
 
         // Initialize commonIndices with all indices.
-        let commonIndices = userResults[0].map((_, index) => index);
+        let tempCommonIndices = userResults[0].map((_, index) => index);
+        setCommonIndices(tempCommonIndices);
 
         // Compare results and find common indices.
         for (const userResult of userResults) {
-          commonIndices = commonIndices.filter((index) => userResult[index] === 'Yes');
+          const temp = commonIndices.filter((index) => userResult[index] === 'Yes');
+          setCommonIndices(temp);
         }
-
-        setCommonIndices(commonIndices);
+        console.log(commonIndices);
 
         const yelpData = await fetchYelpData(zipcode);
         const commonRestaurantsData = commonIndices.map((index) => yelpData.businesses[index]);
@@ -87,8 +88,18 @@ function Results() {
   }, [party, users, zipcode]);
 
   const fetchYelpData = async (zipcode) => {
-    // ... (same as your previous code)
+    const options = {
+      method: 'GET',
+      headers: {
+        accept: 'application/json',
+        Authorization: 'Bearer n1vgxCT7H7rPMv0Ed2EuFhCb049rxhsD08h8t1mxI7CfUry614nt5iDETm9nPKnrvujYoJV-VzisbZ6QscRN_Dh3ctLDuxZbrp_rZhlKL7HbCctZQeE2XfEWpgM3ZXYx',
+      },
+    };
+
+    const response = await fetch(`https://vast-waters-56699-3595bd537b3a.herokuapp.com/https://api.yelp.com/v3/businesses/search?sort_by=best_match&limit=12&radius=1600&location=${zipcode}`, options);
+    return response.json();
   };
+
 
   return (
     <div className="bg-gray-100 min-h-screen p-4">
