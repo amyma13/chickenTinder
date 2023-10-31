@@ -60,12 +60,14 @@ function Results() {
         where('user', '==', user2)
       );
 
-      getDocs(user1ResultsQuery) // Use getDocs to fetch documents
-        .then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            user1Results.push(doc.data().result[0]);
-          });
-          console.log("user1Results:" + user1Results)
+      getDocs(user1ResultsQuery)
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          const resultData = doc.data().result;
+          resultData.forEach((element) => {
+            user1Results.push(element);
+        });
+      });
           getDocs(user2ResultsQuery) // Use getDocs to fetch documents
             .then((querySnapshot) => {
               querySnapshot.forEach((doc) => {
@@ -81,11 +83,12 @@ function Results() {
                   }
                 }
                 console.log("commonIndices:" + commonIndices)
-
-                fetch(`http://localhost:3001/yelpAPI2?zipcode=${zipcode}`)
-                  .then((response) => response.json())
+                const options = {method: 'GET', headers: {accept: 'application/json', Authorization: 'Bearer n1vgxCT7H7rPMv0Ed2EuFhCb049rxhsD08h8t1mxI7CfUry614nt5iDETm9nPKnrvujYoJV-VzisbZ6QscRN_Dh3ctLDuxZbrp_rZhlKL7HbCctZQeE2XfEWpgM3ZXYx' }};
+                fetch(`https://vast-waters-56699-3595bd537b3a.herokuapp.com/https://api.yelp.com/v3/businesses/search?sort_by=best_match&limit=12&radius=1600&location=${zipcode}`, options)
+                .then((response) => response.json())
                   .then((data) => {
-                    const commonRestaurantsData = commonIndices.map((index) => data[index]);
+                    const commonRestaurantsData = data.businesses;
+                    console.log(commonRestaurantsData[0]);
                     setCommonRestaurants(commonRestaurantsData);
                   })
                   .catch((error) => {
@@ -106,14 +109,17 @@ function Results() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {commonRestaurants.map((item, index) => (
           <div key={item.id} className="border rounded-lg shadow-md p-4">
+            <div key={item.id} className="border rounded-lg shadow-md p-4">
             <div className="flex items-start">
-              <img src={item.image} alt={item.name} className="w-1/2 h-48 object-cover rounded" />
+              <img src={item.image_url} alt={item.name} className="w-1/2 h-48 object-cover rounded" />
               <div className="w-1/2 ml-4">
                 <h2 className="text-2xl font-semibold mb-4">{item.name}</h2>
-                <p className="text-gray-700">{`Address: ${item.address}`}</p>
-                <p className="text-gray-700">{`Cuisine: ${item.categories}`}</p>
+                <p className="text-gray-700">{`Address: ${item.location.address1}`}</p>
+                <p className="text-gray-700">{`Cuisine: ${item.categories[0].title}`}</p>
+                <p className="text-gray-700">{`Price: ${item.price}`}</p>
               </div>
             </div>
+          </div>
           </div>
         ))}
       </div>
