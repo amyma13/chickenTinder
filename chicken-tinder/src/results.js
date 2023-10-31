@@ -43,16 +43,23 @@ function Results() {
   }, [party, user1]);
 
   useEffect(() => {
-    if (user2.length === 0) {
-      // No need to fetch restaurant data when there's no user2.
-      return;
-    }
-
+    
     const fetchRestaurantData = async () => {
       console.log('fetching restaurant data');
       const resultsRef = collection(db, 'Results');
       try {
-        const user1ResultsQuery = query(resultsRef, where('party', '==', party), where('user', '==', user1));
+        if (user2.length === 0){
+          console.log('no User 2');
+          const user1ResultsQuery = query(resultsRef, where('party', '==', party), where('user', '==', user1));
+          const user1ResultsSnapshot = getDocs(user1ResultsQuery);
+          const user1Results = user1ResultsSnapshot.docs.map((doc) => doc.data().result).flat();
+          const user1Yeses = user1Results
+            .map((result, index) => result === 'Yes' ? index : -1)
+            .filter((index) => index !== -1);
+            setCommonIndices(user1Yeses);
+        }
+        else{
+          const user1ResultsQuery = query(resultsRef, where('party', '==', party), where('user', '==', user1));
         const user2ResultsQuery = query(resultsRef, where('party', '==', party), where('user', '==', user2[0]));
 
         const [user1ResultsSnapshot, user2ResultsSnapshot] = await Promise.all([
@@ -69,6 +76,7 @@ function Results() {
         .map((result, index) => user1Results[index] === 'Yes' && result === 'Yes' ? index : -1)
         .filter((index) => index !== -1);
         setCommonIndices(userResults);
+        }
         
         console.log("commonIndices");
         console.log(commonIndices);
@@ -83,7 +91,7 @@ function Results() {
     };
 
     fetchRestaurantData();
-  }, [party, user1, user2, zipcode, commonIndices]);
+  }, [party, user1, user2, zipcode]);
 
   const fetchYelpData = async (zipcode) => {
     const options = {
