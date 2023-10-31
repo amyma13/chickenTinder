@@ -13,7 +13,6 @@ import {
 
 function Results() {
   const [commonRestaurants, setCommonRestaurants] = useState([]);
-  const [commonIndices, setCommonIndices] = useState([]);
   const currentUser = auth.currentUser.email;
   const location = useLocation();
   const { zipcode, party } = location.state;
@@ -24,7 +23,7 @@ function Results() {
       try {
         const partyRef = doc(db, 'Party', party);
         const docSnap = await getDoc(partyRef);
-
+        console.log('finding parties');
         if (docSnap.exists()) {
           const data = docSnap.data();
           const otherUsers = data.users.filter((user) => user !== currentUser);
@@ -50,7 +49,14 @@ function Results() {
       try {
         if (users.length === 0) {
           console.log('No users in this party');
-          return;
+          const userResultsQuery = query(resultsRef, where('party', '==', party), where('user', '==', currentUser));
+          const userResultsSnapshot = await getDocs(userResultsQuery);
+          const userResultsData = userResultsSnapshot.docs.map((doc) => doc.data().result).flat();
+          const yelpData = await fetchYelpData(zipcode);
+          const userPreferredRestaurants = userResultsData.map((result, index) =>
+            result === 'Yes' ? yelpData.businesses[index] : null
+          );
+          setCommonRestaurants(userPreferredRestaurants.filter((restaurant) => restaurant !== null));
         }
 
         // Create an array to store user results.
@@ -58,22 +64,22 @@ function Results() {
 
         // Fetch results for each user in the party.
         for (const user of users) {
+          console.log("user " + user);
           const userResultsQuery = query(resultsRef, where('party', '==', party), where('user', '==', user));
           const userResultsSnapshot = await getDocs(userResultsQuery);
           const userResultsData = userResultsSnapshot.docs.map((doc) => doc.data().result).flat();
+          console.log("userResultsData " + userResultsData);
           userResults.push(userResultsData);
         }
 
         // Initialize commonIndices with all indices.
-        let tempCommonIndices = userResults[0].map((_, index) => index);
-        setCommonIndices(tempCommonIndices);
+        let commonIndices = userResults[0].map((_, index) => index);
 
         // Compare results and find common indices.
         for (const userResult of userResults) {
-          const temp = commonIndices.filter((index) => userResult[index] === 'Yes');
-          setCommonIndices(temp);
+          commonIndices = commonIndices.filter((index) => userResult[index] === 'Yes');
+          console.log("commonIndices " + commonIndices);
         }
-        console.log(commonIndices);
 
         const yelpData = await fetchYelpData(zipcode);
         const commonRestaurantsData = commonIndices.map((index) => yelpData.businesses[index]);
