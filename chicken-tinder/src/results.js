@@ -13,97 +13,90 @@ import {
 
 function Results() {
   const [commonRestaurants, setCommonRestaurants] = useState([]);
+  const [commonIndices, setCommonIndices] = useState([]);
   const user1 = auth.currentUser.email;
-
   const location = useLocation();
   const { zipcode, party } = location.state;
-  const [user2, setUser2] = useState(''); // State to store user2's email
+  const [user2, setUser2] = useState([]);
 
   useEffect(() => {
-    const partyRef = doc(db, 'Party', party);
-
-    getDoc(partyRef)
-      .then((docSnap) => {
+    const fetchPartyData = async () => {
+      try {
+        const partyRef = doc(db, 'Party', party);
+        const docSnap = await getDoc(partyRef);
+        
         if (docSnap.exists()) {
           const data = docSnap.data();
-          const users = data.users;
-          const foundUser2 = users.find((user) => user !== user1);
-          console.log("we found user 2? " + foundUser2);
+          const foundUser2 = data.users.find((user) => user !== user1);
           if (foundUser2) {
-            setUser2(foundUser2);
+            setUser2([foundUser2]);
           }
         } else {
           console.log('Party does not exist');
         }
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error('Error fetching party:', error);
-      });
+      }
+    };
+
+    fetchPartyData();
   }, [party, user1]);
 
   useEffect(() => {
-    console.log("user 2? " + user2);
-    if (!user2) {
-      setUser2(user1);
+    if (user2.length === 0) {
+      // No need to fetch restaurant data when there's no user2.
+      return;
     }
-    if (user2) {
-      const resultsRef = collection(db, 'Results'); // Reference the 'Results' collection
-      const user1Results = [];
 
-      const user1ResultsQuery = query(
-        resultsRef,
-        where('party', '==', party),
-        where('user', '==', user1)
-      );
+    const fetchRestaurantData = async () => {
+      console.log('fetching restaurant data');
+      const resultsRef = collection(db, 'Results');
+      try {
+        const user1ResultsQuery = query(resultsRef, where('party', '==', party), where('user', '==', user1));
+        const user2ResultsQuery = query(resultsRef, where('party', '==', party), where('user', '==', user2[0]));
 
-      const user2ResultsQuery = query(
-        resultsRef,
-        where('party', '==', party),
-        where('user', '==', user2)
-      );
+        const [user1ResultsSnapshot, user2ResultsSnapshot] = await Promise.all([
+          getDocs(user1ResultsQuery),
+          getDocs(user2ResultsQuery),
+        ]);
 
-      console.log("user 2 query " + user2ResultsQuery);
+        const user1Results = user1ResultsSnapshot.docs.map((doc) => doc.data().result).flat();
+        const user2Results = user2ResultsSnapshot.docs.map((doc) => doc.data().result).flat();
+        console.log("user2Results");
+        console.log(user2Results);
 
+        const userResults = user2Results
+        .map((result, index) => user1Results[index] === 'Yes' && result === 'Yes' ? index : -1)
+        .filter((index) => index !== -1);
+        setCommonIndices(userResults);
+        
+        console.log("commonIndices");
+        console.log(commonIndices);
 
-      getDocs(user1ResultsQuery)
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          const resultData = doc.data().result;
-          resultData.forEach((element) => {
-            user1Results.push(element);
-        });
-      });
+        const yelpData = await fetchYelpData(zipcode);
+        const commonRestaurantsData = commonIndices.map((index) => yelpData.businesses[index]);
 
-      console.log("user1Results:" + user1Results)
+        setCommonRestaurants(commonRestaurantsData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
 
-          getDocs(user2ResultsQuery) // Use getDocs to fetch documents
-            .then((querySnapshot) => {
-              querySnapshot.forEach((doc) => {
-                const user2Results = doc.data().result;
-                console.log("user2Results:" + user2Results)
-                const commonIndices = [];
-                for (let i = 0; i < user2Results.length; i++) {
-                  console.log(user1Results[i] + " " + user2Results[i]);
-                  if (user1Results[i]==user2Results[i]) {
-                    commonIndices.push(i);
-                  }
-                }
-                console.log("commonIndices:" + commonIndices)
-                const options = {method: 'GET', headers: {accept: 'application/json', Authorization: 'Bearer n1vgxCT7H7rPMv0Ed2EuFhCb049rxhsD08h8t1mxI7CfUry614nt5iDETm9nPKnrvujYoJV-VzisbZ6QscRN_Dh3ctLDuxZbrp_rZhlKL7HbCctZQeE2XfEWpgM3ZXYx' }};
-                fetch(`https://vast-waters-56699-3595bd537b3a.herokuapp.com/https://api.yelp.com/v3/businesses/search?sort_by=best_match&limit=12&radius=1600&location=${zipcode}`, options)
-                .then((response) => response.json())
-                  .then((data) => {
-                    const commonRestaurantsData = commonIndices.map((index) => data.businesses[index]);
-                    setCommonRestaurants(commonRestaurantsData);
-                  })
-                  .catch((error) => {
-                    console.error('Error fetching data:', error);
-                  });
-              });
-            });
-        });
-    }
-  }, [party, user1, user2, zipcode]);
+    fetchRestaurantData();
+  }, [party, user1, user2, zipcode, commonIndices]);
+
+  const fetchYelpData = async (zipcode) => {
+    const options = {
+      method: 'GET',
+      headers: {
+        accept: 'application/json',
+        Authorization: 'Bearer n1vgxCT7H7rPMv0Ed2EuFhCb049rxhsD08h8t1mxI7CfUry614nt5iDETm9nPKnrvujYoJV-VzisbZ6QscRN_Dh3ctLDuxZbrp_rZhlKL7HbCctZQeE2XfEWpgM3ZXYx',
+      },
+    };
+
+    const response = await fetch(`https://vast-waters-56699-3595bd537b3a.herokuapp.com/https://api.yelp.com/v3/businesses/search?sort_by=best_match&limit=12&radius=1600&location=${zipcode}`, options);
+    return response.json();
+  };
 
   return (
     <div className="bg-gray-100 min-h-screen p-4">
@@ -112,9 +105,8 @@ function Results() {
       </Link>
       <h1 className="text-4xl font-semibold mb-4">Restaurants Both Users Agree On</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {commonRestaurants.map((item, index) => (
+        {commonRestaurants.map((item) => (
           <div key={item.id} className="border rounded-lg shadow-md p-4">
-            <div key={item.id} className="border rounded-lg shadow-md p-4">
             <div className="flex items-start">
               <img src={item.image_url} alt={item.name} className="w-1/2 h-48 object-cover rounded" />
               <div className="w-1/2 ml-4">
@@ -124,7 +116,6 @@ function Results() {
                 <p className="text-gray-700">{`Price: ${item.price}`}</p>
               </div>
             </div>
-          </div>
           </div>
         ))}
       </div>
