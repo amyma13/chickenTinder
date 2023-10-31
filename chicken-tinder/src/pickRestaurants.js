@@ -44,7 +44,7 @@ function PickRestaurants() {
   };
 
     useEffect(() => {
-    const options = {method: 'GET', headers: {accept: 'application/json', Authorization: 'Bearer cSR7W49KfeuavvdvjsIprf8QuDTpBdktA7PHxvJgZnRFnsuIVmJRzKY5Qhcx3BJo-gDgZhjXv6-rqIWuarA-gfJ4B8_JnyVIFyAHeWa6_ha5d6HkRhWCHPyDOw0aZXYx' }};
+    const options = {method: 'GET', headers: {accept: 'application/json', Authorization: 'Bearer svwYnE5CJtU89nxVua5FnmjVZVLr-fw560J8QbCfoGabOr7YDL2b1e_fIrqgL0zNL7prcURHDPkQha3D9WiRy_MYCdwmtBPoYdE96FIWWaKCYfA6RkDQAhtTAWVBZXYx' }};
 
   fetch(`https://vast-waters-56699-3595bd537b3a.herokuapp.com/https://api.yelp.com/v3/businesses/search?sort_by=best_match&limit=12&radius=1600&location=${zipcode}`, options)
       .then(response => response.json())

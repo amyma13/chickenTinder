@@ -4,7 +4,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const yelp = require('yelp-fusion');
-const apiKey = 'n1vgxCT7H7rPMv0Ed2EuFhCb049rxhsD08h8t1mxI7CfUry614nt5iDETm9nPKnrvujYoJV-VzisbZ6QscRN_Dh3ctLDuxZbrp_rZhlKL7HbCctZQeE2XfEWpgM3ZXYx'; // Replace with your Yelp API key
+const apiKey = 'svwYnE5CJtU89nxVua5FnmjVZVLr-fw560J8QbCfoGabOr7YDL2b1e_fIrqgL0zNL7prcURHDPkQha3D9WiRy_MYCdwmtBPoYdE96FIWWaKCYfA6RkDQAhtTAWVBZXYx'; // Replace with your Yelp API key
 
 const app = express();
 app.set('port', (process.env.PORT || 8081));

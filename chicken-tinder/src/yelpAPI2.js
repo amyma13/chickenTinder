@@ -3,7 +3,7 @@ const axios = require('axios');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const yelp = require('yelp-fusion');
-const apiKey = 'cSR7W49KfeuavvdvjsIprf8QuDTpBdktA7PHxvJgZnRFnsuIVmJRzKY5Qhcx3BJo-gDgZhjXv6-rqIWuarA-gfJ4B8_JnyVIFyAHeWa6_ha5d6HkRhWCHPyDOw0aZXYx'; // Replace with your Yelp API key
+const apiKey = 'svwYnE5CJtU89nxVua5FnmjVZVLr-fw560J8QbCfoGabOr7YDL2b1e_fIrqgL0zNL7prcURHDPkQha3D9WiRy_MYCdwmtBPoYdE96FIWWaKCYfA6RkDQAhtTAWVBZXYx'; // Replace with your Yelp API key
 
 const app = express();
 app.use(bodyParser.json());
