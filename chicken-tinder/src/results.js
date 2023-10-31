@@ -14,22 +14,22 @@ import {
 function Results() {
   const [commonRestaurants, setCommonRestaurants] = useState([]);
   const [commonIndices, setCommonIndices] = useState([]);
-  const user1 = auth.currentUser.email;
+  const currentUser = auth.currentUser.email;
   const location = useLocation();
   const { zipcode, party } = location.state;
-  const [user2, setUser2] = useState([]);
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
     const fetchPartyData = async () => {
       try {
         const partyRef = doc(db, 'Party', party);
         const docSnap = await getDoc(partyRef);
-        
+
         if (docSnap.exists()) {
           const data = docSnap.data();
-          const foundUser2 = data.users.find((user) => user !== user1);
-          if (foundUser2) {
-            setUser2([foundUser2]);
+          const otherUsers = data.users.filter((user) => user !== currentUser);
+          if (otherUsers.length > 0) {
+            setUsers([currentUser, ...otherUsers]);
           }
         } else {
           console.log('Party does not exist');
@@ -40,46 +40,39 @@ function Results() {
     };
 
     fetchPartyData();
-  }, [party, user1]);
+  }, [party, currentUser]);
 
   useEffect(() => {
-    
     const fetchRestaurantData = async () => {
       console.log('fetching restaurant data');
       const resultsRef = collection(db, 'Results');
+
       try {
-        if (user2.length === 0){
-          console.log('no User 2');
-          const user1ResultsQuery = query(resultsRef, where('party', '==', party), where('user', '==', user1));
-          const user1ResultsSnapshot = getDocs(user1ResultsQuery);
-          const user1Results = user1ResultsSnapshot.docs.map((doc) => doc.data().result).flat();
-          const user1Yeses = user1Results
-            .map((result, index) => result === 'Yes' ? index : -1)
-            .filter((index) => index !== -1);
-            setCommonIndices(user1Yeses);
+        if (users.length === 0) {
+          console.log('No users in this party');
+          return;
         }
-        else{
-          const user1ResultsQuery = query(resultsRef, where('party', '==', party), where('user', '==', user1));
-        const user2ResultsQuery = query(resultsRef, where('party', '==', party), where('user', '==', user2[0]));
 
-        const [user1ResultsSnapshot, user2ResultsSnapshot] = await Promise.all([
-          getDocs(user1ResultsQuery),
-          getDocs(user2ResultsQuery),
-        ]);
+        // Create an array to store user results.
+        const userResults = [];
 
-        const user1Results = user1ResultsSnapshot.docs.map((doc) => doc.data().result).flat();
-        const user2Results = user2ResultsSnapshot.docs.map((doc) => doc.data().result).flat();
-        console.log("user2Results");
-        console.log(user2Results);
-
-        const userResults = user2Results
-        .map((result, index) => user1Results[index] === 'Yes' && result === 'Yes' ? index : -1)
-        .filter((index) => index !== -1);
-        setCommonIndices(userResults);
+        // Fetch results for each user in the party.
+        for (const user of users) {
+          const userResultsQuery = query(resultsRef, where('party', '==', party), where('user', '==', user));
+          const userResultsSnapshot = await getDocs(userResultsQuery);
+          const userResultsData = userResultsSnapshot.docs.map((doc) => doc.data().result).flat();
+          userResults.push(userResultsData);
         }
-        
-        console.log("commonIndices");
-        console.log(commonIndices);
+
+        // Initialize commonIndices with all indices.
+        let commonIndices = userResults[0].map((_, index) => index);
+
+        // Compare results and find common indices.
+        for (const userResult of userResults) {
+          commonIndices = commonIndices.filter((index) => userResult[index] === 'Yes');
+        }
+
+        setCommonIndices(commonIndices);
 
         const yelpData = await fetchYelpData(zipcode);
         const commonRestaurantsData = commonIndices.map((index) => yelpData.businesses[index]);
@@ -91,19 +84,10 @@ function Results() {
     };
 
     fetchRestaurantData();
-  }, [party, user1, user2, zipcode]);
+  }, [party, users, zipcode]);
 
   const fetchYelpData = async (zipcode) => {
-    const options = {
-      method: 'GET',
-      headers: {
-        accept: 'application/json',
-        Authorization: 'Bearer n1vgxCT7H7rPMv0Ed2EuFhCb049rxhsD08h8t1mxI7CfUry614nt5iDETm9nPKnrvujYoJV-VzisbZ6QscRN_Dh3ctLDuxZbrp_rZhlKL7HbCctZQeE2XfEWpgM3ZXYx',
-      },
-    };
-
-    const response = await fetch(`https://vast-waters-56699-3595bd537b3a.herokuapp.com/https://api.yelp.com/v3/businesses/search?sort_by=best_match&limit=12&radius=1600&location=${zipcode}`, options);
-    return response.json();
+    // ... (same as your previous code)
   };
 
   return (
@@ -111,7 +95,7 @@ function Results() {
       <Link to="/joinParty" className="text-indigo-700 mb-4">
         Go Back
       </Link>
-      <h1 className="text-4xl font-semibold mb-4">Restaurants Both Users Agree On</h1>
+      <h1 className="text-4xl font-semibold mb-4">Restaurants All Users Agree On</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {commonRestaurants.map((item) => (
           <div key={item.id} className="border rounded-lg shadow-md p-4">
