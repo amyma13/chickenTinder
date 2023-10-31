@@ -28,6 +28,7 @@ function Results() {
           const data = docSnap.data();
           const users = data.users;
           const foundUser2 = users.find((user) => user !== user1);
+          console.log("we found user 2? " + foundUser2);
           if (foundUser2) {
             setUser2(foundUser2);
           }
@@ -41,6 +42,7 @@ function Results() {
   }, [party, user1]);
 
   useEffect(() => {
+    console.log("user 2? " + user2);
     if (!user2) {
       setUser2(user1);
     }
@@ -60,6 +62,9 @@ function Results() {
         where('user', '==', user2)
       );
 
+      console.log("user 2 query " + user2ResultsQuery);
+
+
       getDocs(user1ResultsQuery)
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
@@ -68,6 +73,9 @@ function Results() {
             user1Results.push(element);
         });
       });
+
+      console.log("user1Results:" + user1Results)
+
           getDocs(user2ResultsQuery) // Use getDocs to fetch documents
             .then((querySnapshot) => {
               querySnapshot.forEach((doc) => {
@@ -76,10 +84,8 @@ function Results() {
                 const commonIndices = [];
                 for (let i = 0; i < user2Results.length; i++) {
                   console.log(user1Results[i] + " " + user2Results[i]);
-                  if (user2Results[i]) {
-                    console.log(i);
+                  if (user1Results[i]==user2Results[i]) {
                     commonIndices.push(i);
-                    console.log(commonIndices);
                   }
                 }
                 console.log("commonIndices:" + commonIndices)
@@ -87,8 +93,7 @@ function Results() {
                 fetch(`https://vast-waters-56699-3595bd537b3a.herokuapp.com/https://api.yelp.com/v3/businesses/search?sort_by=best_match&limit=12&radius=1600&location=${zipcode}`, options)
                 .then((response) => response.json())
                   .then((data) => {
-                    const commonRestaurantsData = data.businesses;
-                    console.log(commonRestaurantsData[0]);
+                    const commonRestaurantsData = commonIndices.map((index) => data.businesses[index]);
                     setCommonRestaurants(commonRestaurantsData);
                   })
                   .catch((error) => {
