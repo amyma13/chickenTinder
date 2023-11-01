@@ -23,6 +23,7 @@ function PickRestaurants() {
     setUserResponses(updatedResponses);
   };
 
+  // Calculate whether the user can submit based on all responses being defined
   const canSubmit = userResponses.every(response => response !== undefined);
 
   const handleSubmit = async () => {
@@ -46,7 +47,13 @@ function PickRestaurants() {
   };
 
   useEffect(() => {
-    const options = { method: 'GET', headers: { accept: 'application/json', Authorization: 'Bearer svwYnE5CJtU89nxVua5FnmjVZVLr-fw560J8QbCfoGabOr7YDL2b1e_fIrqgL0zNL7prcURHDPkQha3D9WiRy_MYCdwmtBPoYdE96FIWWaKCYfA6RkDQAhtTAWVBZXYx' } };
+    const options = {
+      method: 'GET',
+      headers: {
+        accept: 'application/json',
+        Authorization: 'Bearer svwYnE5CJtU89nxVua5FnmjVZVLr-fw560J8QbCfoGabOr7YDL2b1e_fIrqgL0zNL7prcURHDPkQha3D9WiRy_MYCdwmtBPoYdE96FIWWaKCYfA6RkDQAhtTAWVBZXYx'
+      }
+    };
 
     fetch(`https://vast-waters-56699-3595bd537b3a.herokuapp.com/https://api.yelp.com/v3/businesses/search?sort_by=best_match&limit=12&radius=1600&location=${zipcode}`, options)
       .then(response => response.json())
@@ -56,7 +63,7 @@ function PickRestaurants() {
         setRestaurants(data.businesses);
       })
       .catch(err => console.error(err));
-  }, []);
+  }, [zipcode]);
 
   return (
     <div className="bg-gray-100 min-h-screen p-4">
@@ -65,7 +72,6 @@ function PickRestaurants() {
       </Link>
       <h1 className="text-4xl font-semibold mb-4">Would You Eat At These Restaurants?</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-
         {restaurants.map((item, index) => (
           <div key={item.id} className="border rounded-lg shadow-md p-4">
             <div className="flex items-start">
@@ -102,6 +108,11 @@ function PickRestaurants() {
       </div>
 
       <div className="text-indigo-700 mt-4">{success}</div>
+      {!submitted && !canSubmit && (
+        <p className="text-red-500 mt-2">
+          Please respond to all restaurants before submitting.
+        </p>
+      )}
       {!submitted && canSubmit && (
         <button
           className="bg-indigo-700 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded mt-4"
@@ -109,11 +120,6 @@ function PickRestaurants() {
         >
           Submit Responses
         </button>
-      )}
-      {!submitted && !canSubmit && (
-        <p className="text-red-500 mt-2">
-          Please respond to all restaurants before submitting.
-        </p>
       )}
     </div>
   );
