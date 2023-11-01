@@ -9,6 +9,7 @@ import PickRestaurants from './pickRestaurants';
 import Results from './results';
 import Login from './login';
 import ViewProfile from './viewProfile';
+import CreateAccount from './createAccount';
 
 function App() {
 
@@ -17,13 +18,14 @@ function App() {
       <Switch>
         <Route path="/homepage" exact component={HomePage} />
         <Route path="/" exact component={Login} />
+        <Route path="/createAccount" component={CreateAccount} />
         <Route path="/restaurantlist" component={RestaurantList} />
         <Route path="/profile" component={Profile} />
-        <Route path="/viewProfile" component={ViewProfile} /> 
+        <Route path="/viewProfile" component={ViewProfile} />
         <Route path="/joinParty" component={JoinParty} />
         <Route path="/createParty" component={CreateParty} />
-        <Route path="/pickRestaurants" component={PickRestaurants} /> 
-        <Route path="/results" component={Results} /> 
+        <Route path="/pickRestaurants" component={PickRestaurants} />
+        <Route path="/results" component={Results} />
       </Switch>
     </Router>
   );

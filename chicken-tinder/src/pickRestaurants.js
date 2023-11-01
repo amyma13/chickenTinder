@@ -43,10 +43,10 @@ function PickRestaurants() {
     history.push("/results", { zipcode: zipcode, party: party });
   };
 
-    useEffect(() => {
-    const options = {method: 'GET', headers: {accept: 'application/json', Authorization: 'Bearer svwYnE5CJtU89nxVua5FnmjVZVLr-fw560J8QbCfoGabOr7YDL2b1e_fIrqgL0zNL7prcURHDPkQha3D9WiRy_MYCdwmtBPoYdE96FIWWaKCYfA6RkDQAhtTAWVBZXYx' }};
+  useEffect(() => {
+    const options = { method: 'GET', headers: { accept: 'application/json', Authorization: 'Bearer svwYnE5CJtU89nxVua5FnmjVZVLr-fw560J8QbCfoGabOr7YDL2b1e_fIrqgL0zNL7prcURHDPkQha3D9WiRy_MYCdwmtBPoYdE96FIWWaKCYfA6RkDQAhtTAWVBZXYx' } };
 
-  fetch(`https://vast-waters-56699-3595bd537b3a.herokuapp.com/https://api.yelp.com/v3/businesses/search?sort_by=best_match&limit=12&radius=1600&location=${zipcode}`, options)
+    fetch(`https://vast-waters-56699-3595bd537b3a.herokuapp.com/https://api.yelp.com/v3/businesses/search?sort_by=best_match&limit=12&radius=1600&location=${zipcode}`, options)
       .then(response => response.json())
       .then(data => {
         console.log(data);
@@ -54,7 +54,7 @@ function PickRestaurants() {
         setRestaurants(data.businesses);
       })
       .catch(err => console.error(err));
-  }, []); 
+  }, []);
 
 
   return (
@@ -78,8 +78,8 @@ function PickRestaurants() {
             <div className="flex justify-between mt-4">
               <button
                 className={`${userResponses[index] === 'Yes'
-                    ? 'w-1/2 mr-2 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-3 rounded transition-colors'
-                    : 'w-1/2 mr-2 bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-3 rounded transition-colors'
+                  ? 'w-1/2 mr-2 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-3 rounded transition-colors'
+                  : 'w-1/2 mr-2 bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-3 rounded transition-colors'
                   }`}
                 onClick={() => handleResponse(index, 'Yes')}
               >
@@ -87,8 +87,8 @@ function PickRestaurants() {
               </button>
               <button
                 className={`${userResponses[index] === 'No'
-                    ? 'w-1/2 ml-2 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-3 rounded transition-colors'
-                    : 'w-1/2 ml-2 bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-3 rounded transition-colors'
+                  ? 'w-1/2 ml-2 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-3 rounded transition-colors'
+                  : 'w-1/2 ml-2 bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-3 rounded transition-colors'
                   }`}
                 onClick={() => handleResponse(index, 'No')}
               >
