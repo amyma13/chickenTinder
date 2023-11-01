@@ -23,10 +23,12 @@ function PickRestaurants() {
     setUserResponses(updatedResponses);
   };
 
+  const canSubmit = userResponses.every(response => response !== undefined);
+
   const handleSubmit = async () => {
     setSubmitted(true);
     try {
-      const ref = collection(db, 'Results')
+      const ref = collection(db, 'Results');
       await setDoc(doc(ref, auth.currentUser.email), {
         party: party,
         result: userResponses,
@@ -56,7 +58,6 @@ function PickRestaurants() {
       .catch(err => console.error(err));
   }, []);
 
-
   return (
     <div className="bg-gray-100 min-h-screen p-4">
       <Link to="/joinParty" className="text-indigo-700 mb-4">
@@ -64,6 +65,7 @@ function PickRestaurants() {
       </Link>
       <h1 className="text-4xl font-semibold mb-4">Would You Eat At These Restaurants?</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
         {restaurants.map((item, index) => (
           <div key={item.id} className="border rounded-lg shadow-md p-4">
             <div className="flex items-start">
@@ -98,14 +100,20 @@ function PickRestaurants() {
           </div>
         ))}
       </div>
+
       <div className="text-indigo-700 mt-4">{success}</div>
-      {!submitted && (
+      {!submitted && canSubmit && (
         <button
           className="bg-indigo-700 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded mt-4"
           onClick={handleSubmit}
         >
           Submit Responses
         </button>
+      )}
+      {!submitted && !canSubmit && (
+        <p className="text-red-500 mt-2">
+          Please respond to all restaurants before submitting.
+        </p>
       )}
     </div>
   );
