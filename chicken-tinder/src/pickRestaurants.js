@@ -23,8 +23,7 @@ function PickRestaurants() {
     setUserResponses(updatedResponses);
   };
 
-  // Calculate whether the user can submit based on all responses being defined
-  const canSubmit = userResponses.every(response => response !== undefined);
+  const canSubmit = userResponses.length === restaurants.length && userResponses.every(response => response !== undefined);
 
   const handleSubmit = async () => {
     setSubmitted(true);
@@ -108,18 +107,18 @@ function PickRestaurants() {
       </div>
 
       <div className="text-indigo-700 mt-4">{success}</div>
-      {!submitted && !canSubmit && (
-        <p className="text-red-500 mt-2">
-          Please respond to all restaurants before submitting.
-        </p>
-      )}
       {!submitted && canSubmit && (
         <button
-          className="bg-indigo-700 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded mt-4"
+          className="bg-indigo-700 hover-bg-purple-700 text-white font-bold py-3 px-4 rounded mt-4"
           onClick={handleSubmit}
         >
           Submit Responses
         </button>
+      )}
+      {!submitted && !canSubmit && (
+        <p className="text-red-500 mt-2">
+          Please respond to all restaurants before submitting.
+        </p>
       )}
     </div>
   );
