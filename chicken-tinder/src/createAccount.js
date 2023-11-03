@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { db, auth } from "./firebase";
+import { collection, doc, setDoc, getDoc } from "firebase/firestore";
+import { exportedUsername, setExportUsername } from './login';
 
 function CreateAccount() {
     const history = useHistory();
@@ -8,12 +11,38 @@ function CreateAccount() {
     const [city, setCity] = useState('');
     const [zipCode, setZipCode] = useState('');
 
-    const handleCreateAccount = () => {
+    const handleCreateAccount = async () => {
         // Handle the form submission logic here
         // You can save the user data to your database or perform any necessary actions
 
         // After account creation, you can navigate to another page, e.g., the homepage
-        history.push('/homepage');
+        
+        try {
+            const findDoc = doc(db, "Users", username);
+            const docUserInfo = await getDoc(findDoc);
+            if (docUserInfo.exists()) {
+                console.log("Username taken")
+            }
+            else {
+                const ref = collection(db, "Users");
+                await setDoc(doc(ref, username), {
+                username: username,
+                password: password,
+                city: city,
+                zipCode: zipCode,
+                name: username
+                });
+
+                setExportUsername(username);
+
+                history.push('/homepage');
+            }
+        }
+        catch(error){
+            console.log("Error uploading to database: "+error);
+        }
+
+
     };
 
     return (
@@ -33,6 +62,7 @@ function CreateAccount() {
                             className="w-full border border-gray-300 p-2 rounded"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
+                            required
                         />
                     </div>
                     <div className="mb-4">
@@ -42,6 +72,7 @@ function CreateAccount() {
                             className="w-full border border-gray-300 p-2 rounded"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            required
                         />
                     </div>
                     <div className="mb-4">
@@ -51,6 +82,7 @@ function CreateAccount() {
                             className="w-full border border-gray-300 p-2 rounded"
                             value={city}
                             onChange={(e) => setCity(e.target.value)}
+                            required
                         />
                     </div>
                     <div className="mb-4">
@@ -60,6 +92,7 @@ function CreateAccount() {
                             className="w-full border border-gray-300 p-2 rounded"
                             value={zipCode}
                             onChange={(e) => setZipCode(e.target.value)}
+                            required
                         />
                     </div>
 

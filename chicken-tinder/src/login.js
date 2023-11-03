@@ -6,7 +6,10 @@ import { auth, provider, db } from "./firebase";
 import { collection, doc, setDoc, getDoc } from "firebase/firestore";
 
 var exportedUsername = "";
-export { exportedUsername };
+const setExportUsername  = (newUsername) => {
+   exportedUsername = newUsername;
+}
+export { exportedUsername, setExportUsername };
 
 function Login() {
   const history = useHistory();
@@ -24,7 +27,7 @@ function Login() {
       const findDoc = doc(db, "Users", username);
       const docUserInfo = await getDoc(findDoc);
       if (docUserInfo.exists()) {
-        if (docUserInfo.data().password == password) {
+        if (docUserInfo.data().password === password) {
           exportedUsername = username;
           setPassword("");
           history.push("/homepage")
