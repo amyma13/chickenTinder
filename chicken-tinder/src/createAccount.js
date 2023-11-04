@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { db, auth } from "./firebase";
 import { collection, doc, setDoc, getDoc } from "firebase/firestore";
-import { exportedUsername, setExportUsername } from './login';
 
 function CreateAccount() {
     const history = useHistory();
@@ -33,7 +32,7 @@ function CreateAccount() {
                 name: username
                 });
 
-                setExportUsername(username);
+                sessionStorage.setItem("username", username);
 
                 history.push('/homepage');
             }

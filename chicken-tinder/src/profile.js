@@ -3,16 +3,15 @@ import { Link, useHistory } from 'react-router-dom';
 import "./profile.css";
 import { db, auth } from "./firebase";
 import { collection, doc, setDoc, updateDoc, getDoc } from "firebase/firestore";
-import { exportedUsername } from './login';
 
 function Profile() {
+
+  const username = sessionStorage.getItem("username");
 
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const docUsers = doc(db, "Users", exportedUsername);
-        console.log("HERE");
-        console.log(auth.currentUser.email);
+        const docUsers = doc(db, "Users", username);
         const docUserInfo = await getDoc(docUsers);
         console.log("Doc Data:", docUserInfo.data());
         if (docUserInfo.exists()) {
@@ -70,7 +69,7 @@ function Profile() {
     try {
       const ref = collection(db, "Users");
       console.log(auth.currentUser.email);
-      await updateDoc(doc(ref, exportedUsername), {
+      await updateDoc(doc(ref, username), {
         name: formData.name,
         city: formData.city,
         zipCode: formData.zipCode

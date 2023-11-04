@@ -3,9 +3,10 @@ import { Link, useHistory } from 'react-router-dom';
 import "./viewProfile.css";
 import { db, auth } from "./firebase";
 import { collection, doc, setDoc, updateDoc, getDoc } from "firebase/firestore";
-import { exportedUsername } from './login';
 
 function ViewProfile() {
+
+  const username = sessionStorage.getItem("username");
 
   const [name, setName] = useState('');
   const [city, setCity] = useState('');
@@ -20,9 +21,11 @@ function ViewProfile() {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const docUsers = doc(db, "Users", exportedUsername);
+
+        console.log("USER: "+sessionStorage.getItem("username"));
+
+        const docUsers = doc(db, "Users", sessionStorage.getItem("username"));
         console.log("HERE");
-        console.log(auth.currentUser.email);
         const docUserInfo = await getDoc(docUsers);
         console.log("Doc Data: ", docUserInfo.data());
         if (docUserInfo.exists()) {

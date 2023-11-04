@@ -5,11 +5,6 @@ import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth, provider, db } from "./firebase";
 import { collection, doc, setDoc, getDoc } from "firebase/firestore";
 
-var exportedUsername = "";
-const setExportUsername  = (newUsername) => {
-   exportedUsername = newUsername;
-}
-export { exportedUsername, setExportUsername };
 
 function Login() {
   const history = useHistory();
@@ -22,13 +17,14 @@ function Login() {
     history.push("/createAccount");
   };
 
+
   const loginWithoutGoogle = async () => {
     try {
       const findDoc = doc(db, "Users", username);
       const docUserInfo = await getDoc(findDoc);
       if (docUserInfo.exists()) {
         if (docUserInfo.data().password === password) {
-          exportedUsername = username;
+          sessionStorage.setItem("username", username);
           setPassword("");
           history.push("/homepage")
         } else {
@@ -59,7 +55,8 @@ function Login() {
         uploadToDB(user.email, user.displayName);
 
         //setUsername(user.email);
-        exportedUsername = user.email;
+        sessionStorage.setItem("username", user.email);
+
 
         async function uploadToDB(emailEntered, displayName) {
           console.log("WE IN HERE");

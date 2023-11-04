@@ -4,9 +4,11 @@ import { db, auth } from "./firebase";
 import { collection, doc, setDoc, arrayUnion, updateDoc } from "firebase/firestore";
 import { v4 as uuidv4 } from 'uuid';
 import "./createParty.css";
-import { exportedUsername } from './login';
 
 function CreateParty() {
+
+  const username = sessionStorage.getItem("username");
+
   const [formData, setFormData] = useState({
     partyName: '',
     password: '',
@@ -41,7 +43,7 @@ function CreateParty() {
         users: [auth.currentUser.email],
       });
 
-      const refEmail = doc(db, 'Users', exportedUsername);
+      const refEmail = doc(db, 'Users', username);
 
       await updateDoc(refEmail, {
         party: arrayUnion(formData.partyName),

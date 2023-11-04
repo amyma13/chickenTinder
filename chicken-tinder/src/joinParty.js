@@ -5,9 +5,10 @@ import { Link } from 'react-router-dom';
 import { db, auth } from "./firebase";
 import { collection, doc, setDoc, getDoc, arrayUnion, updateDoc } from "firebase/firestore";
 import { getNodeText } from '@testing-library/react';
-import { exportedUsername } from './login';
 
 function JoinParty() {
+
+  const username = sessionStorage.getItem("username");
   const history = useHistory();
 
   const [success, setSuccess] = useState('');
@@ -43,7 +44,7 @@ function JoinParty() {
         if (docSnap.data().password == formData.password) {
           console.log("PASSWORD CORRECT");
           setSuccess("Party successfully joined");
-          const refEmail = doc(db, "Users", exportedUsername);
+          const refEmail = doc(db, "Users", username);
 
           // Atomically add a new region to the "regions" array field.
           await updateDoc(refEmail, {
@@ -74,8 +75,7 @@ function JoinParty() {
   const fetchParties = async () => {
     try {
       // const parties = []; // Fetch parties from your database
-      const docUsers = doc(db, "Users", exportedUsername);
-      console.log(auth.currentUser.email);
+      const docUsers = doc(db, "Users", username);
       const docParties = await getDoc(docUsers);
       console.log("Doc Data:", docParties.data());
       if (docParties.exists()) {
