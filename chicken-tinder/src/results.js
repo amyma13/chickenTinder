@@ -13,7 +13,10 @@ import {
 
 function Results() {
   const [commonRestaurants, setCommonRestaurants] = useState([]);
-  const currentUser = auth.currentUser.email;
+
+  //const currentUser = auth.currentUser.email;
+  const currentUser = sessionStorage.getItem("username");
+
   const location = useLocation();
   const { zipcode, party } = location.state;
   const [users, setUsers] = useState([]);

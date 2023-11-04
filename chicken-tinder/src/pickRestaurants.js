@@ -7,6 +7,9 @@ import "./pickRestaurants.css";
 import { collection, doc, setDoc } from "firebase/firestore";
 
 function PickRestaurants() {
+
+  const username = sessionStorage.getItem("username");
+  
   const [restaurants, setRestaurants] = useState([]);
   const [userResponses, setUserResponses] = useState([]);
   const [submitted, setSubmitted] = useState(false);
@@ -29,10 +32,10 @@ function PickRestaurants() {
     setSubmitted(true);
     try {
       const ref = collection(db, 'Results');
-      await setDoc(doc(ref, auth.currentUser.email), {
+      await setDoc(doc(ref, username), {
         party: party,
         result: userResponses,
-        user: auth.currentUser.email,
+        user: username,
         zipcode: zipcode,
       });
 

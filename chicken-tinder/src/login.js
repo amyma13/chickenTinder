@@ -38,7 +38,6 @@ function Login() {
     catch (error) {
       setError("There is an error getting info from database: " + error)
     }
-    //history.push('/homepage');
   };
 
   async function pushGoogleAccount(e) {
