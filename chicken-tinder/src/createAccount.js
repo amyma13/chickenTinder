@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { db, auth } from "./firebase";
 import { collection, doc, setDoc, getDoc } from "firebase/firestore";
+import bcrypt from "bcryptjs";
 
 function CreateAccount() {
     const history = useHistory();
@@ -9,6 +10,8 @@ function CreateAccount() {
     const [password, setPassword] = useState('');
     const [city, setCity] = useState('');
     const [zipCode, setZipCode] = useState('');
+
+    const saltRounds = 10;
 
     const handleCreateAccount = async () => {
         // Handle the form submission logic here
@@ -23,14 +26,18 @@ function CreateAccount() {
                 console.log("Username taken")
             }
             else {
-                const ref = collection(db, "Users");
-                await setDoc(doc(ref, username), {
-                username: username,
-                password: password,
-                city: city,
-                zipCode: zipCode,
-                name: username
-                });
+                bcrypt.hash(password, saltRounds, async function(err, hash) {
+                    if (err) throw err;
+                    // Store the hash in your database
+                    const ref = collection(db, "Users");
+                    await setDoc(doc(ref, username), {
+                    username: username,
+                    password: hash,
+                    city: city,
+                    zipCode: zipCode,
+                    name: username
+                    });
+                  });
 
                 sessionStorage.setItem("username", username);
 

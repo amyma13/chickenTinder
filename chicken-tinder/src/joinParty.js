@@ -96,6 +96,8 @@ function JoinParty() {
   useEffect(() => {
     const fetchZipCodes = async () => {
       const zips = [];
+      console.log("PARTIES: "+myParties);
+    
       for (let index = 0; index < myParties.length; index++) {
         try {
           const party = myParties[index];
@@ -112,8 +114,11 @@ function JoinParty() {
       }
       setMyZips(zips);
     };
-
-    fetchZipCodes();
+    
+    if (myParties !== undefined){
+      fetchZipCodes();
+    }
+    
   }, [myParties]);
 
 

@@ -4,7 +4,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth, provider, db } from "./firebase";
 import { collection, doc, setDoc, getDoc } from "firebase/firestore";
-
+import bcrypt from "bcryptjs";
 
 function Login() {
   const history = useHistory();
@@ -23,13 +23,19 @@ function Login() {
       const findDoc = doc(db, "Users", username);
       const docUserInfo = await getDoc(findDoc);
       if (docUserInfo.exists()) {
-        if (docUserInfo.data().password === password) {
-          sessionStorage.setItem("username", username);
-          setPassword("");
-          history.push("/homepage")
-        } else {
-          setError("Wrong password")
-        }
+        const hashPassword = docUserInfo.data().password
+        bcrypt.compare(password, hashPassword, function(err, result) {
+          if (err) throw err;
+
+          if (result) {
+            sessionStorage.setItem("username", username);
+            setPassword("");
+            history.push("/homepage")
+          } else {
+            setError("Wrong password")
+          }
+        });
+        
       }
       else {
         setError("User doesn't exist");
