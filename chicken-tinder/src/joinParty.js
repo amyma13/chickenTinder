@@ -96,8 +96,8 @@ function JoinParty() {
   useEffect(() => {
     const fetchZipCodes = async () => {
       const zips = [];
-      console.log("PARTIES: "+myParties);
-    
+      console.log("PARTIES: " + myParties);
+
       for (let index = 0; index < myParties.length; index++) {
         try {
           const party = myParties[index];
@@ -114,11 +114,11 @@ function JoinParty() {
       }
       setMyZips(zips);
     };
-    
-    if (myParties !== undefined){
+
+    if (myParties !== undefined) {
       fetchZipCodes();
     }
-    
+
   }, [myParties]);
 
 
@@ -201,7 +201,7 @@ function JoinParty() {
           </div>
         </div>
       </div>
-      <Link to="/homepage" className="text-indigo-700 mt-4">Go Back</Link>
+      <Link to="/homepage" className="text-indigo-700 mt-4 absolute top-4 left-4">Go Back</Link>
     </div>
   );
 }
