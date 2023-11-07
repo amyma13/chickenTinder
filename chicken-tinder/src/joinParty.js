@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import "./joinParty.css";
 import { Link } from 'react-router-dom';
 import { db, auth } from "./firebase";
-import { collection, doc, setDoc, getDoc, arrayUnion, updateDoc } from "firebase/firestore";
+import { collection, doc, setDoc, getDoc, arrayUnion, updateDoc, arrayRemove } from "firebase/firestore";
 import { getNodeText } from '@testing-library/react';
 
 function JoinParty() {
@@ -46,7 +45,6 @@ function JoinParty() {
           setSuccess("Party successfully joined");
           const refEmail = doc(db, "Users", username);
 
-          // Atomically add a new region to the "regions" array field.
           await updateDoc(refEmail, {
             party: arrayUnion(formData.partyName)
           });
@@ -74,18 +72,30 @@ function JoinParty() {
 
   const fetchParties = async () => {
     try {
-      // const parties = []; // Fetch parties from your database
       const docUsers = doc(db, "Users", username);
       const docParties = await getDoc(docUsers);
       console.log("Doc Data:", docParties.data());
       if (docParties.exists()) {
         setMyParties(docParties.data().party)
       } else {
-        // setMyParties([]); 
         setMyParties(myParties || []);
       }
     } catch (error) {
       console.error('Error fetching parties:', error);
+    }
+  };
+
+  const leaveGroup = async (partyName) => {
+    try {
+      const refEmail = doc(db, "Users", username);
+
+      await updateDoc(refEmail, {
+        party: arrayRemove(partyName),
+      });
+
+      fetchParties();
+    } catch (error) {
+      console.error('Error leaving group:', error);
     }
   };
 
@@ -191,6 +201,12 @@ function JoinParty() {
                       onClick={() => navigateToViewResults(index, party)}
                     >
                       View Results
+                    </button>
+                    <button
+                      className="bg-red-500 hover:bg-orange-600 text-white font-bold py-2 px-3 rounded ml-2"
+                      onClick={() => leaveGroup(party)}
+                    >
+                      Leave
                     </button>
                   </li>
                 ))
