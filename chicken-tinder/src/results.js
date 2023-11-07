@@ -12,9 +12,8 @@ import {
 } from 'firebase/firestore';
 
 function Results() {
-  const [commonRestaurants, setCommonRestaurants] = useState([]);
 
-  //const currentUser = auth.currentUser.email;
+  const [commonRestaurants, setCommonRestaurants] = useState([]);
   const currentUser = sessionStorage.getItem("username");
 
   const location = useLocation();
@@ -26,7 +25,6 @@ function Results() {
       try {
         const partyRef = doc(db, 'Party', party);
         const docSnap = await getDoc(partyRef);
-        console.log('finding parties');
         if (docSnap.exists()) {
           const data = docSnap.data();
           const otherUsers = data.users.filter((user) => user !== currentUser);
@@ -45,21 +43,29 @@ function Results() {
   }, [party, currentUser]);
 
   useEffect(() => {
-    const fetchRestaurantData = async () => {
-      console.log('fetching restaurant data');
-      const resultsRef = collection(db, 'Results');
+    console.log("Users:", users);
+    console.log("AAAAAAAA:", currentUser);
 
+    const fetchRestaurantData = async () => {
+            const resultsRef = collection(db, 'Results');
       try {
         if (users.length === 0) {
-          console.log('No users in this party');
           const userResultsQuery = query(resultsRef, where('party', '==', party), where('user', '==', currentUser));
           const userResultsSnapshot = await getDocs(userResultsQuery);
-          const userResultsData = userResultsSnapshot.docs.map((doc) => doc.data().result).flat();
-          const yelpData = await fetchYelpData(zipcode);
-          const userPreferredRestaurants = userResultsData.map((result, index) =>
+          console.log("please god let this work");
+          if (userResultsSnapshot && userResultsSnapshot.docs) {
+            const userResultsData = userResultsSnapshot.docs.map((doc) => doc.data().result).flat();
+            console.log(userResultsData);
+            const yelpData = await fetchYelpData(zipcode);
+            const userPreferredRestaurants = userResultsData.map((result, index) =>
             result === 'Yes' ? yelpData.businesses[index] : null
           );
+          console.log("userPreferredRestaurants (users = 0):", userPreferredRestaurants);
+
           setCommonRestaurants(userPreferredRestaurants.filter((restaurant) => restaurant !== null));
+          } else {
+            console.error('USERS = 0 Error fetching user results: User results snapshot is not as expected.');
+          }
         }
 
         // Create an array to store user results.
@@ -67,13 +73,23 @@ function Results() {
 
         // Fetch results for each user in the party.
         for (const user of users) {
-          console.log("user " + user);
           const userResultsQuery = query(resultsRef, where('party', '==', party), where('user', '==', user));
           const userResultsSnapshot = await getDocs(userResultsQuery);
-          const userResultsData = userResultsSnapshot.docs.map((doc) => doc.data().result).flat();
-          console.log("userResultsData " + userResultsData);
-          userResults.push(userResultsData);
+          if (userResultsSnapshot && userResultsSnapshot.docs) {
+            const userResultsData = userResultsSnapshot.docs.map((doc) => doc.data().result).flat();
+            userResults.push(userResultsData);
+
+            console.log(`userPreferredRestaurants for ${user}:`, userResultsData);
+
+          } else {
+            // Handle the case where userResultsSnapshot is undefined or doesn't have the expected properties
+            console.error('USERS> 0 Error fetching user results: User results snapshot is not as expected.');
+          }
+
         }
+
+        console.log("userResults (all users):", userResults);
+
 
         // Initialize commonIndices with all indices.
         let commonIndices = userResults[0].map((_, index) => index);
@@ -81,7 +97,6 @@ function Results() {
         // Compare results and find common indices.
         for (const userResult of userResults) {
           commonIndices = commonIndices.filter((index) => userResult[index] === 'Yes');
-          console.log("commonIndices " + commonIndices);
         }
 
         const yelpData = await fetchYelpData(zipcode);

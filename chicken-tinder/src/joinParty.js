@@ -43,6 +43,13 @@ function JoinParty() {
         if (docSnap.data().password == formData.password) {
           console.log("PASSWORD CORRECT");
           setSuccess("Party successfully joined");
+
+          const partyId = docSnap.id;
+          const partyRef = doc(db, "Party", partyId);
+          await updateDoc(partyRef, {
+            users: arrayUnion(username)
+          });
+            
           const refEmail = doc(db, "Users", username);
 
           await updateDoc(refEmail, {
@@ -88,11 +95,15 @@ function JoinParty() {
   const leaveGroup = async (partyName) => {
     try {
       const refEmail = doc(db, "Users", username);
-
       await updateDoc(refEmail, {
         party: arrayRemove(partyName),
       });
-
+  
+      const partyRef = doc(db, "Party", partyName);
+      await updateDoc(partyRef, {
+        users: arrayRemove(username),
+      });
+  
       fetchParties();
     } catch (error) {
       console.error('Error leaving group:', error);

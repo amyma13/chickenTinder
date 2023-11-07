@@ -2,7 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useLocation, useHistory } from 'react-router-dom';
 import { db, auth } from "./firebase";
-import { collection, doc, setDoc } from "firebase/firestore";
+import { v4 as uuidv4 } from 'uuid';
+import {
+  collection,
+  doc,
+  setDoc,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 
 function PickRestaurants() {
 
@@ -28,21 +36,37 @@ function PickRestaurants() {
 
   const handleSubmit = async () => {
     setSubmitted(true);
+  
     try {
-      const ref = collection(db, 'Results');
-      await setDoc(doc(ref, username), {
-        party: party,
-        result: userResponses,
-        user: username,
-        zipcode: zipcode,
-      });
-
+      const resultsRef = collection(db, 'Results');
+  
+      const existingResultQuery = query(resultsRef, where('user', '==', username), where('party', '==', party));
+      const existingResultSnapshot = await getDocs(existingResultQuery);
+  
+      if (existingResultSnapshot.size === 0) {
+        await setDoc(doc(resultsRef, uuidv4()), {
+          party: party,
+          result: userResponses,
+          user: username,
+          zipcode: zipcode,
+        });
+      } else {
+        existingResultSnapshot.forEach(async (doc) => {
+          await setDoc(doc.ref, {
+            party: party,
+            result: userResponses,
+            user: username,
+            zipcode: zipcode,
+          }, { merge: true });
+        });
+      }
+  
       setSuccess('Responses submitted successfully');
     } catch (error) {
       console.log('Error:', error);
       setSuccess('Something went wrong :(');
     }
-
+  
     history.push("/results", { zipcode: zipcode, party: party });
   };
 
