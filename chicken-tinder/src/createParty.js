@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { db, auth } from "./firebase";
 import { collection, doc, setDoc, arrayUnion, updateDoc } from "firebase/firestore";
 import { v4 as uuidv4 } from 'uuid';
-import "./createParty.css";
 
 function CreateParty() {
 

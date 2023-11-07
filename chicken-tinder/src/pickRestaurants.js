@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useLocation, useHistory } from 'react-router-dom';
 import { db, auth } from "./firebase";
-import { v4 as uuidv4 } from 'uuid';
-import "./pickRestaurants.css";
 import { collection, doc, setDoc } from "firebase/firestore";
 
 function PickRestaurants() {

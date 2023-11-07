@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import './restaurantlist.css';
 
 function RestaurantList() {
   const [selectedRestaurants, setSelectedRestaurants] = useState([]);
