@@ -3,10 +3,12 @@ import { Link } from 'react-router-dom';
 import { db, auth } from "./firebase";
 import { collection, doc, setDoc, arrayUnion, updateDoc } from "firebase/firestore";
 import { v4 as uuidv4 } from 'uuid';
+import { useHistory } from 'react-router-dom';
 
 function CreateParty() {
 
   const username = sessionStorage.getItem("username");
+  const history = useHistory();
 
   const [formData, setFormData] = useState({
     partyName: '',
@@ -18,6 +20,8 @@ function CreateParty() {
 
   const [success, setSuccess] = useState('');
   const [partyMessage, setPartyMessage] = useState('');
+  const [zip, setZip] = useState('');
+  const [party_name, setPartyName] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -55,6 +59,9 @@ Party Name: ${formData.partyName}
 Password: ${formData.password}
 ${partyLink}`;
 
+      setZip(formData.zipcode);
+      setPartyName(formData.partyName);
+
       setFormData({
         partyName: '',
         password: '',
@@ -76,6 +83,12 @@ ${partyLink}`;
     textArea.select();
     document.execCommand('copy');
     document.body.removeChild(textArea);
+  };
+
+  const navigateToViewRestaurants = () => {
+    console.log("ZIPCODE: "+zip); //zipcode
+    console.log("PARTY:"+party_name); //party name
+    history.push('/pickRestaurants', { zipcode: zip, party: party_name });
   };
 
   return (
@@ -134,12 +147,18 @@ ${partyLink}`;
             >
               Copy Party Invitation
             </button>
-            <Link
+            {/* <Link
               to="/joinParty"
               className="flex-1 bg-indigo-700 hover:bg-indigo-500 text-white font-bold py-3 px-4 rounded flex items-center justify-center"
             >
               Pick Restaurants
-            </Link>
+            </Link> */}
+            <button
+              onClick = {navigateToViewRestaurants}
+              className="flex-1 bg-indigo-700 hover:bg-indigo-500 text-white font-bold py-3 px-4 rounded flex items-center justify-center"
+            >
+              Pick Restaurants
+            </button>
           </div>
         )}
 

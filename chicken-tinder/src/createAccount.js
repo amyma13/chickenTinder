@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import { db, auth } from "./firebase";
 import { collection, doc, setDoc, getDoc } from "firebase/firestore";
 import bcrypt from "bcryptjs";
@@ -10,6 +10,7 @@ function CreateAccount() {
     const [password, setPassword] = useState('');
     const [city, setCity] = useState('');
     const [zipCode, setZipCode] = useState('');
+    const [error, setError] = useState('');
 
     const saltRounds = 10;
 
@@ -24,10 +25,14 @@ function CreateAccount() {
             const docUserInfo = await getDoc(findDoc);
             if (docUserInfo.exists()) {
                 console.log("Username taken")
+                setError("Username taken");
             }
             else {
                 bcrypt.hash(password, saltRounds, async function(err, hash) {
-                    if (err) throw err;
+                    if (err){
+                        setError(err);
+                        throw err;
+                    } 
                     // Store the hash in your database
                     const ref = collection(db, "Users");
                     await setDoc(doc(ref, username), {
@@ -46,6 +51,7 @@ function CreateAccount() {
         }
         catch(error){
             console.log("Error uploading to database: "+error);
+            setError("Error uploading to database: "+error);
         }
 
 
@@ -101,6 +107,13 @@ function CreateAccount() {
                             required
                         />
                     </div>
+                    
+                    {error && (
+                        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                        <strong className="font-bold">Error: </strong>
+                        <span className="block sm:inline">{error}</span>
+                        </div>
+                    )}
 
                     <button
                         className="bg-indigo-800 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded w-full mb-4"
@@ -109,6 +122,7 @@ function CreateAccount() {
                         Create Account
                     </button>
                 </div>
+                <Link to="/" className="text-indigo-700 mt-4">Go Back</Link>
             </div>
         </div>
     );
