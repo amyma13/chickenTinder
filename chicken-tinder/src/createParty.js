@@ -127,15 +127,23 @@ ${partyLink}`;
         </form>
         <div className="text-indigo-700 mt-4">{success}</div>
         {partyMessage && (
-          <div className="mt-4">
+          <div className="mt-4 flex gap-4">
             <button
               onClick={copyPartyMessage}
-              className="bg-indigo-700 hover:bg-indigo-500 text-white font-bold py-3 px-4 rounded w-full"
+              className="flex-1 bg-indigo-700 hover:bg-indigo-500 text-white font-bold py-3 px-4 rounded"
             >
               Copy Party Invitation
             </button>
+            <Link
+              to="/joinParty"
+              className="flex-1 bg-indigo-700 hover:bg-indigo-500 text-white font-bold py-3 px-4 rounded flex items-center justify-center"
+            >
+              Pick Restaurants
+            </Link>
           </div>
         )}
+
+
 
       </div>
       <Link to="/homepage" className="text-indigo-700 mt-4">Go Back</Link>

@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import HomePage from './homepage';
-import RestaurantList from './restaurantlist';
 import Profile from './profile';
 import JoinParty from './joinParty';
 import CreateParty from './createParty';
@@ -19,7 +18,7 @@ function App() {
         <Route path="/homepage" exact component={HomePage} />
         <Route path="/" exact component={Login} />
         <Route path="/createAccount" component={CreateAccount} />
-        <Route path="/restaurantlist" component={RestaurantList} />
+        <Route path="/pickRestaurants" component={PickRestaurants} />
         <Route path="/profile" component={Profile} />
         <Route path="/viewProfile" component={ViewProfile} />
         <Route path="/joinParty" component={JoinParty} />
