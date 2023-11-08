@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import './homepage.css';
 
 function HomePage() {
@@ -19,13 +19,20 @@ function HomePage() {
     history.push("/joinParty");
   };
 
+  const handleLogout = () => {
+    sessionStorage.removeItem("username");
+  }
+
+
   return (
     <div>
-      <h1 className="text-4xl font-semibold mt-2 mb-0">
-        <span className="text-yellow-800">🐔 Chicken</span>T <span className="text-red-500">🔥</span>
-      </h1>
+      <div className="flex justify-between items-center p-4">
+        <h1 className="text-4xl font-semibold mt-2 mb-0">
+          <span className="text-yellow-800">🐔 Chicken</span>T <span className="text-red-500">🔥</span>
+        </h1>
+        <Link to="/" className="text-indigo-700" onClick = {handleLogout}>Logout</Link>
+      </div>
       <div className="container flex flex-col items-center justify-center h-screen p-6">
-
         <div className="button-row space-y-8">
           <button
             onClick={navigateToCreateParty}
@@ -48,10 +55,6 @@ function HomePage() {
         </div>
       </div>
     </div>
-
-
-
-
   );
 }
 
