@@ -100,17 +100,6 @@ function Profile() {
             />
           </div>
           <div className="form-group mb-4">
-            <label className="text-lg font-semibold">Current City:</label>
-            <input
-              type="text"
-              name="city"
-              value={formData.city}
-              onChange={handleChange}
-              required
-              className="text-gray-700 border border-indigo-400 rounded w-full py-2 px-3"
-            />
-          </div>
-          <div className="form-group mb-4">
             <label className="text-lg font-semibold">Zip Code:</label>
             <input
               type="text"

@@ -22,7 +22,7 @@ function ViewProfile() {
     const fetchUserInfo = async () => {
       try {
 
-        console.log("USER: "+sessionStorage.getItem("username"));
+        console.log("USER: " + sessionStorage.getItem("username"));
 
         const docUsers = doc(db, "Users", sessionStorage.getItem("username"));
         console.log("HERE");
@@ -64,10 +64,6 @@ function ViewProfile() {
         <div className="form-group mb-4">
           <label className="text-lg font-semibold">Name:</label>
           <div className="text-gray-700">{name}</div>
-        </div>
-        <div className="form-group mb-4">
-          <label className="text-lg font-semibold">Current City:</label>
-          <div className="text-gray-700">{city}</div>
         </div>
         <div className="form-group mb-4">
           <label className="text-lg font-semibold">Zip Code:</label>

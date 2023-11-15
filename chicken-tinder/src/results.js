@@ -12,10 +12,8 @@ import {
 } from 'firebase/firestore';
 
 function Results() {
-
   const [commonRestaurants, setCommonRestaurants] = useState([]);
-  const currentUser = sessionStorage.getItem("username");
-
+  const currentUser = sessionStorage.getItem('username');
   const location = useLocation();
   const { zipcode, party } = location.state;
   const [users, setUsers] = useState([]);
@@ -43,58 +41,40 @@ function Results() {
   }, [party, currentUser]);
 
   useEffect(() => {
-    console.log("Users:", users);
-    console.log("AAAAAAAA:", currentUser);
-
     const fetchRestaurantData = async () => {
-            const resultsRef = collection(db, 'Results');
+      const resultsRef = collection(db, 'Results');
       try {
         if (users.length === 0) {
           const userResultsQuery = query(resultsRef, where('party', '==', party), where('user', '==', currentUser));
           const userResultsSnapshot = await getDocs(userResultsQuery);
-          console.log("please god let this work");
           if (userResultsSnapshot && userResultsSnapshot.docs) {
             const userResultsData = userResultsSnapshot.docs.map((doc) => doc.data().result).flat();
-            console.log(userResultsData);
             const yelpData = await fetchYelpData(zipcode);
             const userPreferredRestaurants = userResultsData.map((result, index) =>
-            result === 'Yes' ? yelpData.businesses[index] : null
-          );
-          console.log("userPreferredRestaurants (users = 0):", userPreferredRestaurants);
+              result === 'Yes' ? yelpData.businesses[index] : null
+            );
 
-          setCommonRestaurants(userPreferredRestaurants.filter((restaurant) => restaurant !== null));
+            setCommonRestaurants(userPreferredRestaurants.filter((restaurant) => restaurant !== null));
           } else {
             console.error('USERS = 0 Error fetching user results: User results snapshot is not as expected.');
           }
         }
 
-        // Create an array to store user results.
         const userResults = [];
 
-        // Fetch results for each user in the party.
         for (const user of users) {
           const userResultsQuery = query(resultsRef, where('party', '==', party), where('user', '==', user));
           const userResultsSnapshot = await getDocs(userResultsQuery);
           if (userResultsSnapshot && userResultsSnapshot.docs) {
             const userResultsData = userResultsSnapshot.docs.map((doc) => doc.data().result).flat();
             userResults.push(userResultsData);
-
-            console.log(`userPreferredRestaurants for ${user}:`, userResultsData);
-
           } else {
-            // Handle the case where userResultsSnapshot is undefined or doesn't have the expected properties
             console.error('USERS> 0 Error fetching user results: User results snapshot is not as expected.');
           }
-
         }
 
-        console.log("userResults (all users):", userResults);
-
-
-        // Initialize commonIndices with all indices.
         let commonIndices = userResults[0].map((_, index) => index);
 
-        // Compare results and find common indices.
         for (const userResult of userResults) {
           commonIndices = commonIndices.filter((index) => userResult[index] === 'Yes');
         }
@@ -124,6 +104,15 @@ function Results() {
     return response.json();
   };
 
+  const copyRestaurantNames = () => {
+    const restaurantNames = commonRestaurants.map((restaurant) => restaurant.name).join('\n');
+    const textArea = document.createElement('textarea');
+    textArea.value = restaurantNames;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textArea);
+  };
 
   return (
     <div className="bg-gray-100 min-h-screen p-4">
@@ -146,6 +135,14 @@ function Results() {
           </div>
         ))}
       </div>
+      {commonRestaurants.length > 0 && (
+        <button
+          onClick={copyRestaurantNames}
+          className="bg-indigo-700 hover:bg-indigo-500 text-white font-bold py-3 px-4 rounded mt-4"
+        >
+          Share Results
+        </button>
+      )}
     </div>
   );
 }
