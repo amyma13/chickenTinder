@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { db, auth } from "./firebase";
-import { collection, doc, setDoc, getDoc, arrayUnion, updateDoc, arrayRemove } from "firebase/firestore";
+import { collection, doc, setDoc, getDoc, getDocs, arrayUnion, updateDoc, arrayRemove, deleteDoc, query, where } from "firebase/firestore";
 import { getNodeText } from '@testing-library/react';
 
 function JoinParty() {
@@ -102,6 +102,30 @@ function JoinParty() {
       const partyRef = doc(db, "Party", partyName);
       await updateDoc(partyRef, {
         users: arrayRemove(username),
+      });
+
+      fetchParties();
+
+      // If no users are left, delete the entire party
+      const partyDoc = await getDoc(partyRef);
+      const partyData = partyDoc.data();
+      if (partyData && partyData.users && partyData.users.length === 0) {
+        await deleteDoc(partyRef);
+        console.log('Party deleted because there are no users remaining.');
+      }
+
+      const resultsQuery = query(
+        collection(db, "Results"),
+        where("user", "==", username),
+        where("party", "==", partyName)
+      );
+  
+      const resultsSnapshot = await getDocs(resultsQuery);
+  
+      resultsSnapshot.forEach(async (doc) => {
+        // Delete each document found in the query
+        await deleteDoc(doc.ref);
+        console.log('Results document deleted.');
       });
   
       fetchParties();
