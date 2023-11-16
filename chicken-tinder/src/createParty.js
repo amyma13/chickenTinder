@@ -38,12 +38,13 @@ function CreateParty() {
 
     try {
       const ref = collection(db, 'Party');
+      const currentUser = sessionStorage.getItem('username');
 
       await setDoc(doc(ref, formData.partyName), {
         partyName: formData.partyName,
         password: formData.password,
         zipcode: formData.zipcode,
-        users: [auth.currentUser.email],
+        users: [currentUser],
       });
 
       const refEmail = doc(db, 'Users', username);
