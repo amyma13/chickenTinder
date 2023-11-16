@@ -23,6 +23,7 @@ function CreateParty() {
   const [partyMessage, setPartyMessage] = useState('');
   const [zip, setZip] = useState('');
   const [party_name, setPartyName] = useState('');
+  const [error, setError] = useState('');
 
   const fetchUserZipcode = async () => {
     try {
@@ -51,10 +52,38 @@ function CreateParty() {
     });
   };
 
+  const checkDuplicates = async (partyName) => {
+    try {
+      const partyRef = doc(db, 'Users', partyName);
+      const partyDoc = await getDoc(partyRef);
+
+      if (partyDoc.exists()) {
+        console.log("ExISTS");
+        setError('Party name already exists');
+        return true;
+      } else {
+        console.log("NOT EXIST");
+        setError('');
+        return false;
+      }
+    } catch (error) {
+      setError('Error fetching user data:', error);
+    }
+  };
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const uniqueId = uuidv4();
+
+    const duplicate = await checkDuplicates(formData.partyName);
+
+    console.log("DUP: "+duplicate);
+
+    if (!duplicate){
+
+      console.log("Creating party now");
 
     try {
       const ref = collection(db, 'Party');
@@ -92,8 +121,9 @@ ${partyLink}`;
       setPartyMessage(message);
     } catch (error) {
       console.log('Error: ' + error);
-      setSuccess('Party unable to be created');
+      setError('Party unable to be created: '+error);
     }
+  }
   };
 
   const copyPartyMessage = () => {
@@ -169,6 +199,12 @@ ${partyLink}`;
           </button>
         </form>
         <div className="text-indigo-700 mt-4">{success}</div>
+        {error && (
+                        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                        <strong className="font-bold">Error: </strong>
+                        <span className="block sm:inline">{error}</span>
+                        </div>
+                    )}
         {partyMessage && (
           <div className="mt-4 flex gap-4">
             <button
