@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { db, auth } from "./firebase";
-import { collection, doc, setDoc, arrayUnion, updateDoc } from "firebase/firestore";
+import { collection, doc, getDoc, setDoc, arrayUnion, updateDoc } from "firebase/firestore";
 import { v4 as uuidv4 } from 'uuid';
 import { useHistory } from 'react-router-dom';
 
@@ -18,10 +18,30 @@ function CreateParty() {
     id: ''
   });
 
+
   const [success, setSuccess] = useState('');
   const [partyMessage, setPartyMessage] = useState('');
   const [zip, setZip] = useState('');
   const [party_name, setPartyName] = useState('');
+
+  const fetchUserZipcode = async () => {
+    try {
+      const userRef = doc(db, 'Users', username);
+      const userDoc = await getDoc(userRef);
+
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        setFormData((prevData) => ({
+          ...prevData,
+          zipcode: userData.zipCode || '',
+        }));
+      } else {
+        console.log('User document not found.');
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -123,14 +143,23 @@ ${partyLink}`;
           </div>
           <div className="form-group mb-4">
             <label className="text-lg font-semibold">Zip Code:</label>
-            <input
-              type="text"
-              name="zipcode"
-              value={formData.zipcode}
-              onChange={handleChange}
-              required
-              className="text-gray-700 border border-indigo-400 rounded w-full py-2 px-3"
-            />
+            <div className="flex items-center">
+              <input
+                type="text"
+                name="zipcode"
+                value={formData.zipcode}
+                onChange={handleChange}
+                required
+                className="text-gray-700 border border-indigo-400 rounded w-full py-2 px-3 ml-2"
+              />
+              <button
+                type="button"
+                onClick={fetchUserZipcode}
+                className="ml-2 bg-indigo-700 hover:bg-indigo-500 text-white font-bold py-2 px-3 rounded"
+              >
+                Use My Zip Code
+              </button>
+            </div>
           </div>
           <button
             type="submit"
