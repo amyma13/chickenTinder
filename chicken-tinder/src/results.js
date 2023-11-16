@@ -17,6 +17,8 @@ function Results() {
   const location = useLocation();
   const { zipcode, party } = location.state;
   const [users, setUsers] = useState([]);
+  const [noMatchesFound, setNoMatchesFound] = useState(false);
+  const [preferencesNotFilled, setPreferencesNotFilled] = useState(false);
 
   useEffect(() => {
     const fetchPartyData = async () => {
@@ -67,6 +69,10 @@ function Results() {
           const userResultsSnapshot = await getDocs(userResultsQuery);
           if (userResultsSnapshot && userResultsSnapshot.docs) {
             const userResultsData = userResultsSnapshot.docs.map((doc) => doc.data().result).flat();
+            if (userResultsData.length === 0) {
+              setPreferencesNotFilled(true);
+              return;
+            }
             userResults.push(userResultsData);
           } else {
             console.error('USERS> 0 Error fetching user results: User results snapshot is not as expected.');
@@ -77,6 +83,10 @@ function Results() {
 
         for (const userResult of userResults) {
           commonIndices = commonIndices.filter((index) => userResult[index] === 'Yes');
+        }
+        if (commonIndices.length === 0) {
+          setNoMatchesFound(true);
+          return;
         }
 
         const yelpData = await fetchYelpData(zipcode);
@@ -120,6 +130,8 @@ function Results() {
         Go Back
       </Link>
       <h1 className="text-4xl font-semibold mb-4">Restaurants All Users Agree On</h1>
+      {noMatchesFound && <p>No matches found.</p>}
+      {preferencesNotFilled && <p>Some users have not filled out their preferences yet.</p>}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {commonRestaurants.map((item) => (
           <div key={item.id} className="border rounded-lg shadow-md p-4">
