@@ -49,6 +49,7 @@ function PickRestaurants() {
           result: userResponses,
           user: username,
           zipcode: zipcode,
+
         });
       } else {
         existingResultSnapshot.forEach(async (doc) => {
@@ -105,6 +106,9 @@ function PickRestaurants() {
                 <p className="text-gray-700">{`Address: ${item.location.address1}`}</p>
                 <p className="text-gray-700">{`Cuisine: ${item.categories[0].title}`}</p>
                 <p className="text-gray-700">{`Price: ${item.price}`}</p>
+                <p className="text-gray-700">
+  <a href={item.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline' }}>Visit site</a>
+</p>
               </div>
             </div>
             <div className="flex justify-between mt-4">

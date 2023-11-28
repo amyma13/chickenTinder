@@ -216,29 +216,9 @@ ${partyLink}`;
                 onClick={fetchCurrentLocation}
                 className="ml-2 bg-indigo-700 hover:bg-indigo-500 text-white font-bold py-2 px-3 rounded"
               >
-                Use My Zip Code
+                Use My Current Location
               </button>
             </div>
-{/* 
-             <div className="form-group mb-4">
-            <label className="text-lg font-semibold">Zip Code:</label>
-            <div className="flex items-center">
-              <input
-                type="text"
-                name="zipcode"
-                value={formData.zipcode}
-                onChange={handleChange}
-                required
-                className="text-gray-700 border border-indigo-400 rounded w-full py-2 px-3 ml-2"
-              />
-              <button
-                type="button"
-                onClick={fetchCurrentLocation}
-                className="ml-2 bg-indigo-700 hover:bg-indigo-500 text-white font-bold py-2 px-3 rounded"
-              >
-                Use My Zip Code
-              </button>
-            </div> */}
 
           </div>
           <button
