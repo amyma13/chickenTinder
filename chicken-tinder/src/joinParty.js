@@ -83,7 +83,7 @@ function JoinParty() {
       const docParties = await getDoc(docUsers);
       console.log("Doc Data:", docParties.data());
       if (docParties.exists()) {
-        setMyParties(docParties.data().party)
+        setMyParties(docParties.data().party.reverse())
       } else {
         setMyParties(myParties || []);
       }
