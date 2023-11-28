@@ -44,6 +44,35 @@ function CreateParty() {
     }
   };
 
+  const fetchCurrentLocation = async () => {
+  try {
+    // Check if geolocation is supported in the browser
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        const { coords } = position;
+        const { latitude, longitude } = coords;
+
+        // Use a reverse geocoding service to get the user's zipcode from latitude and longitude
+        const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`);
+        const data = await response.json();
+
+        // Access the zipcode from the response data
+        const userZipcode = data.postcode || '';
+
+        // Update the form data with the retrieved zipcode
+        setFormData((prevData) => ({
+          ...prevData,
+          zipcode: userZipcode,
+        }));
+      });
+    } else {
+      console.log('Geolocation is not supported in this browser.');
+    }
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+  }
+};
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -184,12 +213,33 @@ ${partyLink}`;
               />
               <button
                 type="button"
-                onClick={fetchUserZipcode}
+                onClick={fetchCurrentLocation}
                 className="ml-2 bg-indigo-700 hover:bg-indigo-500 text-white font-bold py-2 px-3 rounded"
               >
                 Use My Zip Code
               </button>
             </div>
+{/* 
+             <div className="form-group mb-4">
+            <label className="text-lg font-semibold">Zip Code:</label>
+            <div className="flex items-center">
+              <input
+                type="text"
+                name="zipcode"
+                value={formData.zipcode}
+                onChange={handleChange}
+                required
+                className="text-gray-700 border border-indigo-400 rounded w-full py-2 px-3 ml-2"
+              />
+              <button
+                type="button"
+                onClick={fetchCurrentLocation}
+                className="ml-2 bg-indigo-700 hover:bg-indigo-500 text-white font-bold py-2 px-3 rounded"
+              >
+                Use My Zip Code
+              </button>
+            </div> */}
+
           </div>
           <button
             type="submit"
